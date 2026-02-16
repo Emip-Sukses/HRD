@@ -1,0 +1,53 @@
+{% extends 'hrd_app/base.html' %}
+
+{% block content %}
+<h3 class="mb-4">Panel Absensi Real-Time</h3>
+
+<table class="table table-hover align-middle">
+    <thead class="table-dark">
+        <tr>
+            <th>Karyawan</th>
+            <th>Departemen</th>
+            <th>Jam Masuk</th>
+            <th>Jam Pulang</th>
+            <th class="text-center">Aksi</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for emp in employees %}
+        {% with absen=emp.get_today_attendance %}
+        <tr>
+            <td><strong>{{ emp.name }}</strong></td>
+            <td><span class="badge bg-secondary">{{ emp.department.name }}</span></td>
+            
+            <td>{{ absen.check_in|default:"--" }}</td>
+            <td>{{ absen.check_out|default:"--" }}</td>
+            
+            <td class="text-center">
+                <form method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="employee_id" value="{{ emp.id }}">
+                    
+                    {% if not absen %}
+                        <button type="submit" name="aksi" value="masuk" class="btn btn-success btn-sm">
+                            Absen Masuk
+                        </button>
+                    {% elif not absen.check_out %}
+                        <button type="submit" name="aksi" value="pulang" class="btn btn-warning btn-sm">
+                            Absen Pulang
+                        </button>
+                    {% else %}
+                        <span class="badge bg-light text-success border p-2">Selesai Hari Ini</span>
+                    {% endif %}
+                </form>
+            </td>
+        </tr>
+        {% endwith %}
+        {% empty %}
+        <tr>
+            <td colspan="5" class="text-center">Belum ada data karyawan.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
