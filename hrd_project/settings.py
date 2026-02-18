@@ -25,7 +25,8 @@ SECRET_KEY = 'django-insecure-nl@_g6xgy9#ev%r6yi3f7in0)sukhk9i*3&8_$y9f7xy5p$6!#
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+# Mengizinkan akses dari semua host (layanan WSL/Local Network)
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -103,12 +104,15 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+# Mengatur bahasa utama aplikasi ke Bahasa Indonesia
+LANGUAGE_CODE = 'id'
 
-TIME_ZONE = 'UTC'
+# Mengatur zona waktu ke Waktu Indonesia Barat (WIB)
+TIME_ZONE = 'Asia/Jakarta'
 
 USE_I18N = True
 
+# Memastikan Django menggunakan zona waktu yang dikonfigurasi di atas
 USE_TZ = True
 
 
@@ -116,3 +120,5 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+# Lokasi pengumpulan file statis untuk production
+STATIC_ROOT = BASE_DIR / 'staticfiles'

@@ -1,0 +1,56 @@
+{% extends 'hrd_app/base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-4">
+        <div class="card p-4 shadow">
+            <h4 class="text-center mb-4">Login Karyawan</h4>
+
+            <div class="row justify-content-center py-4">
+                <div class="col-md-6 col-lg-5">
+                    <div class="text-center mb-5">
+                        <div class="bg-primary text-white d-inline-block p-3 rounded-circle shadow-sm mb-3">
+                            <i class="fas fa-lock fa-2x"></i>
+                        </div>
+                        <h3 class="fw-bold">Login Karyawan</h3>
+                        <p class="text-muted">Masukkan kredensial Anda untuk akses absensi.</p>
+                    </div>
+
+                    <form method="POST">
+                        {% csrf_token %}
+                        <div class="mb-4">
+                            <label for="username" class="form-label fw-semibold">Username</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0">
+                                    <i class="fas fa-user text-muted"></i>
+                                </span>
+                                <input type="text" name="username" class="form-control border-start-0 ps-0"
+                                    id="username" placeholder="Masukkan username Anda" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-5">
+                            <label for="password" class="form-label fw-semibold">Password</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0">
+                                    <i class="fas fa-key text-muted"></i>
+                                </span>
+                                <input type="password" name="password" class="form-control border-start-0 ps-0"
+                                    id="password" placeholder="Masukkan password Anda" required>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg shadow-sm">
+                                <i class="fas fa-sign-in-alt me-2"></i> Masuk Ke Sistem
+                            </button>
+                        </div>
+                    </form>
+
+                    <div class="mt-5 text-center">
+                        <p class="text-muted small">Lupa password atau belum punya akun?<br>Hubungi Admin Personalia
+                            (HRD) untuk bantuan.</p>
+                    </div>
+                </div>
+            </div>
+            {% endblock %}
