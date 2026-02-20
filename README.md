@@ -26,7 +26,7 @@ Aplikasi manajemen absensi karyawan berbasis Django dengan arsitektur modern, ke
    ```bash
    ./start_hrd.sh
    ```
-   Aplikasi akan berjalan di `http://localhost:8010`.
+   Aplikasi akan berjalan di `http://0.0.0.0:8010`.
 
 ## Akun Default
 - **Superuser (Admin)**:
