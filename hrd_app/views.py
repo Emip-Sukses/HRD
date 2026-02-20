@@ -9,7 +9,7 @@ import math
 
 # Konfigurasi Geolocation Kantor
 LOCATIONS = [
-    {"name": "Kantor Utama", "lat": -6.9242479, "lon": 107.7147351},
+    {"name": "Kantor Utama", "lat": -6.922175676770856, "lon": 107.71524303884748},
     {"name": "Gudang", "lat": -6.92453208361585, "lon": 107.71120702873829},
 ]
 ALLOWED_RADIUS = 100  # dalam meter
