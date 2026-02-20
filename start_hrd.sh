@@ -3,8 +3,15 @@ set -e
 
 APP_DIR="/opt/services/hrd"
 VENV_ACTIVATE="$APP_DIR/venv/bin/activate"
+PORT=8010
 
 echo "🚀 Memulai Pembaruan Sistem HRD..."
+
+# 0. Matikan proses lama yang menggunakan port $PORT
+echo "-> Membersihkan port $PORT..."
+fuser -k ${PORT}/tcp > /dev/null 2>&1 || true
+pkill -f gunicorn > /dev/null 2>&1 || true
+sleep 2
 
 # 1. Pastikan PostgreSQL Berjalan
 echo "-> Memastikan Database PostgreSQL aktif..."
@@ -32,5 +39,5 @@ echo "-> Memastikan Admin User..."
 python create_superuser.py
 
 # 6. Jalankan Server Gunicorn
-echo "-> Menjalankan Server Aplikasi (Port 8000)..."
+echo "-> Menjalankan Server Aplikasi (Port 8010)..."
 exec ./gunicorn_start.sh

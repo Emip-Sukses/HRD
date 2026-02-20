@@ -20,7 +20,7 @@ Script ini otomatis:
 3. Menjalankan Migrasi Database.
 4. Mengumpulkan Static Files (Whitenoise).
 5. Membuat Admin User (`admin` / `adminpassword123`).
-6. Menjalankan Gunicorn pada port `8000`.
+6. Menjalankan Gunicorn pada port `8010`.
 
 ## Struktur Proyek Baru
 - `hrd_app/static/hrd_app/css/style.css`: Core styling (Glassmorphism).

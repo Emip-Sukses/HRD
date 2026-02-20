@@ -19,14 +19,35 @@ def login_karyawan(request):
         username = request.POST.get('username')
         password = request.POST.get('password')
         
-        # Otentikasi user menggunakan backend Django
+        # Otentikasi user menggunakan backend Django (By User/NIK)
         user = authenticate(request, username=username, password=password)
+        
+        # Jika gagal, coba cari berdasarkan Nama Karyawan (Case Insensitive)
+        if user is None:
+            try:
+                # Cari karyawan yang namanya mengandung inputan
+                emps = Employee.objects.filter(name__iexact=username)
+                
+                # HANYA jika ditemukan SATU karyawan unik
+                if emps.count() == 1:
+                    emp = emps.first()
+                    if emp and emp.user:
+                        user = authenticate(request, username=emp.user.username, password=password)
+                elif emps.count() > 1:
+                    messages.warning(request, "Ada beberapa karyawan dengan nama tersebut. Silakan login menggunakan NIK/ID Anda.")
+                    return render(request, 'hrd_app/login_karyawan.html')
+            except Exception:
+                pass
         
         if user is not None:
             # Memastikan hanya non-staff (karyawan biasa) yang bisa login di sini
             if not user.is_staff:
                 login(request, user)
-                messages.success(request, f"Selamat datang kembali, {user.first_name or user.username}!")
+                if user.check_password('password123'):
+                    messages.warning(request, "⚠️ PENTING: Anda masih menggunakan Password Default. Segera hubungi HRD untuk menggantinya demi keamanan.")
+                else:
+                    messages.success(request, f"Selamat datang kembali, {user.first_name or user.username}!")
+                
                 return redirect('index')
             else:
                 # Admin diarahkan ke portal manajemen resmi
@@ -69,10 +90,10 @@ def index(request):
             obj, created = Attendance.objects.get_or_create(
                 employee=employee,
                 date=today,
-                defaults={'check_in': timezone.now().time()}
+                defaults={'check_in': timezone.localtime().time()}
             )
             if created:
-                messages.success(request, f"Absen masuk berhasil pada pukul {obj.check_in.strftime('%H:%M')}. Selamat bekerja!")
+                messages.success(request, f"Absen masuk berhasil pada pukul {obj.check_in.strftime('%H:%M:%S')}. Selamat bekerja!")
             else:
                 messages.warning(request, "Anda sudah tercatat melakukan absen masuk hari ini.")
                 
@@ -81,9 +102,9 @@ def index(request):
             absen = Attendance.objects.filter(employee=employee, date=today).first()
             if absen:
                 if not absen.check_out:
-                    absen.check_out = timezone.now().time()
+                    absen.check_out = timezone.localtime().time()
                     absen.save()
-                    messages.info(request, f"Absen pulang berhasil pada pukul {absen.check_out.strftime('%H:%M')}. Hati-hati di jalan!")
+                    messages.info(request, f"Absen pulang berhasil pada pukul {absen.check_out.strftime('%H:%M:%S')}. Hati-hati di jalan!")
                 else:
                     messages.warning(request, "Anda sudah tercatat melakukan absen pulang hari ini.")
             else:
@@ -116,3 +137,20 @@ def rekap_absensi(request):
         'laporan': laporan,
         'today': today
     })
+
+@login_required
+def riwayat_saya(request):
+    """
+    Karyawan bisa melihat histori absensinya sendiri.
+    """
+    employee = None
+    try:
+        employee = request.user.employee
+    except Employee.DoesNotExist:
+        messages.error(request, "Akun Anda tidak terhubung ke data karyawan.")
+        return redirect('index')
+    
+    # Riwayat 30 hari terakhir
+    histori = Attendance.objects.filter(employee=employee).order_by('-date')[:30]
+    
+    return render(request, 'hrd_app/riwayat_saya.html', {'histori': histori})

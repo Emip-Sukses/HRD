@@ -33,6 +33,8 @@ DEBUG = os.getenv('DEBUG', 'False') == 'True'
 # Mengizinkan akses dari semua host (layanan WSL/Local Network)
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
 
+CSRF_TRUSTED_ORIGINS = ['http://localhost:8010', 'http://127.0.0.1:8010']
+
 
 # Application definition
 
@@ -134,3 +136,9 @@ STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# Login Settings
+# Login Settings
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/login/'
