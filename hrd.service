@@ -1,0 +1,13 @@
+[Unit]
+Description=gunicorn daemon for HRD Project
+After=network.target
+
+[Service]
+User=miftah
+Group=miftah
+WorkingDirectory=/opt/services/hrd
+ExecStart=/opt/services/hrd/gunicorn_start.sh
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 # Model Departemen: Mengelompokkan karyawan berdasarkan divisi kerja
 class Department(models.Model):
@@ -69,3 +71,35 @@ class Attendance(models.Model):
         verbose_name_plural = "Log Kehadiran"
         # Memastikan satu karyawan hanya punya satu baris absensi per hari
         unique_together = ('employee', 'date')
+# Signal receiver untuk membuat User otomatis saat Employee baru ditambahkan
+@receiver(post_save, sender=Employee)
+def create_user_for_employee(sender, instance, created, **kwargs):
+    """
+    Otomatis membuat User account ketika Employee baru dibuat.
+    User akan dibuat jika belum ada user yang terhubung.
+    """
+    if created and not instance.user:
+        # Gunakan employee_id (lowercase) sebagai username
+        username = instance.employee_id.lower()
+        password = "password123"  # Password default, harus diubah karyawan nanti
+        
+        # Pastikan username unik
+        counter = 1
+        original_username = username
+        while User.objects.filter(username=username).exists():
+            username = f"{original_username}{counter}"
+            counter += 1
+        
+        # Buat user account
+        user = User.objects.create_user(
+            username=username,
+            password=password,
+            first_name=instance.name.split()[0] if ' ' in instance.name else instance.name,
+            is_staff=False,  # Karyawan bukan admin
+            is_superuser=False
+        )
+        
+        # Hubungkan User dengan Employee
+        instance.user = user
+        instance.save()
+        print(f"✅ User account dibuat untuk karyawan: {instance.name} (username: {username}, password: {password})")
