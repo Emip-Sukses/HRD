@@ -5,6 +5,25 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib import messages 
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required 
+import math
+
+# Konfigurasi Geolocation Kantor
+OFFICE_LAT = -6.9242479
+OFFICE_LON = 107.7147351
+ALLOWED_RADIUS = 100  # dalam meter
+
+def calculate_distance(lat1, lon1, lat2, lon2):
+    """
+    Menghitung jarak antara dua koordinat menggunakan rumus Haversine (meter).
+    """
+    R = 6371000  # Radius bumi dalam meter
+    phi1, phi2 = math.radians(lat1), math.radians(lat2)
+    dphi = math.radians(lat2 - lat1)
+    dlam = math.radians(lon2 - lon1)
+    
+    a = math.sin(dphi/2)**2 + math.cos(phi1)*math.cos(phi2)*math.sin(dlam/2)**2
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
+    return R * c
 
 def login_karyawan(request):
     """
@@ -84,16 +103,40 @@ def index(request):
     # Menangani aksi tombol Absen Masuk atau Absen Pulang
     if request.method == "POST" and employee:
         aksi = request.POST.get('aksi')
-        
+        lat = request.POST.get('lat')
+        lon = request.POST.get('lon')
+
+        # 1. Validasi Keberadaan Koordinat
+        if not lat or not lon:
+            messages.error(request, "Gagal mendeteksi lokasi. Pastikan GPS aktif dan izinkan akses lokasi di browser.")
+            return redirect('index')
+
+        try:
+            lat = float(lat)
+            lon = float(lon)
+        except (ValueError, TypeError):
+            messages.error(request, "Data lokasi tidak valid.")
+            return redirect('index')
+
+        # 2. Validasi Jarak ke Kantor
+        distance = calculate_distance(lat, lon, OFFICE_LAT, OFFICE_LON)
+        if distance > ALLOWED_RADIUS:
+            messages.error(request, f"Akses Ditolak: Anda berada di luar area kantor ({int(distance)} meter dari titik pusat).")
+            return redirect('index')
+
         if aksi == "masuk":
             # get_or_create memastikan tidak ada duplikasi data absensi di hari yang sama
             obj, created = Attendance.objects.get_or_create(
                 employee=employee,
                 date=today,
-                defaults={'check_in': timezone.localtime().time()}
+                defaults={
+                    'check_in': timezone.localtime().time(),
+                    'lat_in': lat,
+                    'lon_in': lon
+                }
             )
             if created:
-                messages.success(request, f"Absen masuk berhasil pada pukul {obj.check_in.strftime('%H:%M:%S')}. Selamat bekerja!")
+                messages.success(request, f"Absen masuk berhasil pada pukul {obj.check_in.strftime('%H:%M:%S')}. Lokasi terverifikasi!")
             else:
                 messages.warning(request, "Anda sudah tercatat melakukan absen masuk hari ini.")
                 
@@ -103,6 +146,8 @@ def index(request):
             if absen:
                 if not absen.check_out:
                     absen.check_out = timezone.localtime().time()
+                    absen.lat_out = lat
+                    absen.lon_out = lon
                     absen.save()
                     messages.info(request, f"Absen pulang berhasil pada pukul {absen.check_out.strftime('%H:%M:%S')}. Hati-hati di jalan!")
                 else:

@@ -27,8 +27,16 @@
     <div class="col-lg-6">
         <div class="card border-0 shadow-lg overflow-hidden">
             <div class="card-body p-5">
-                <form method="POST">
+                <form method="POST" id="attendance-form">
                     {% csrf_token %}
+
+                    {% if not absen or not absen.check_out %}
+                    <!-- Lokasi Status -->
+                    <div id="location-status" class="alert alert-info py-2 mb-4 d-flex align-items-center"
+                        style="font-size: 0.85rem;">
+                        <i class="fas fa-spinner fa-spin me-2"></i> Mengambil data lokasi...
+                    </div>
+                    {% endif %}
 
                     {% if not absen %}
                     <!-- Belum Absen Masuk -->
@@ -41,7 +49,11 @@
                         <h3 class="fw-bold mb-2">Siap Bekerja?</h3>
                         <p class="text-muted mb-5">Silakan lakukan absensi masuk untuk memulai hari Anda.</p>
 
-                        <button type="submit" name="aksi" value="masuk"
+                        <!-- Input Tersembunyi untuk Lokasi -->
+                        <input type="hidden" name="lat" id="id_lat">
+                        <input type="hidden" name="lon" id="id_lon">
+
+                        <button type="submit" name="aksi" value="masuk" id="btn-absen" disabled
                             class="btn btn-primary btn-lg px-5 py-3 w-100 rounded-pill shadow-sm transition-transform hover-scale">
                             <i class="fas fa-sign-in-alt me-2"></i> ABSEN MASUK SEKARANG
                         </button>
@@ -60,8 +72,12 @@
                             <p class="text-muted">Jangan lupa absen pulang sebelum meninggalkan kantor.</p>
                         </div>
 
-                        <button type="submit" name="aksi" value="pulang"
-                            class="btn btn-warning btn-lg px-5 py-3 w-100 rounded-pill shadow-sm text-white">
+                        <!-- Input Tersembunyi untuk Lokasi -->
+                        <input type="hidden" name="lat" id="id_lat">
+                        <input type="hidden" name="lon" id="id_lon">
+
+                        <button type="submit" name="aksi" value="pulang" id="btn-absen" disabled
+                            class="btn btn-warning btn-lg px-5 py-3 w-100 rounded-pill shadow-sm text-white transition-transform hover-scale">
                             <i class="fas fa-home me-2"></i> ABSEN PULANG
                         </button>
                     </div>
@@ -116,4 +132,73 @@
     </a>
 </div>
 {% endif %}
+
+<script>
+    const officeLat = -6.9242479;
+    const officeLon = 107.7147351;
+    const allowedRadius = 100; // dalam meter
+
+    function getDistance(lat1, lon1, lat2, lon2) {
+        const R = 6371e3; // metres
+        const φ1 = lat1 * Math.PI / 180;
+        const φ2 = lat2 * Math.PI / 180;
+        const Δφ = (lat2 - lat1) * Math.PI / 180;
+        const Δλ = (lon2 - lon1) * Math.PI / 180;
+
+        const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+            Math.cos(φ1) * Math.cos(φ2) *
+            Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+        return R * c;
+    }
+
+    function updateLocation() {
+        const statusDiv = document.getElementById('location-status');
+        const btnAbsen = document.getElementById('btn-absen');
+        const inputsLat = document.querySelectorAll('input[name="lat"]');
+        const inputsLon = document.querySelectorAll('input[name="lon"]');
+
+        if (!statusDiv || !btnAbsen) return;
+
+        if (!navigator.geolocation) {
+            statusDiv.className = "alert alert-danger py-2 mb-4 d-flex align-items-center";
+            statusDiv.innerHTML = '<i class="fas fa-times-circle me-2"></i> Browser tidak mendukung lokasi GPS.';
+            return;
+        }
+
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const userLat = position.coords.latitude;
+                const userLon = position.coords.longitude;
+                const distance = getDistance(userLat, userLon, officeLat, officeLon);
+
+                inputsLat.forEach(input => input.value = userLat);
+                inputsLon.forEach(input => input.value = userLon);
+
+                if (distance <= allowedRadius) {
+                    statusDiv.className = "alert alert-success py-2 mb-4 d-flex align-items-center";
+                    statusDiv.innerHTML = `<i class="fas fa-check-circle me-2"></i> Anda berada di area kantor (${Math.round(distance)}m).`;
+                    btnAbsen.disabled = false;
+                } else {
+                    statusDiv.className = "alert alert-danger py-2 mb-4 d-flex align-items-center";
+                    statusDiv.innerHTML = `<i class="fas fa-map-marker-alt me-2"></i> Anda di luar area (${Math.round(distance)}m). Silakan masuk ke kantor.`;
+                    btnAbsen.disabled = true;
+                }
+            },
+            (error) => {
+                statusDiv.className = "alert alert-warning py-2 mb-4 d-flex align-items-center";
+                statusDiv.innerHTML = '<i class="fas fa-exclamation-triangle me-2"></i> Harap izinkan akses lokasi untuk absen.';
+                btnAbsen.disabled = true;
+            },
+            { enableHighAccuracy: true }
+        );
+    }
+
+    // Jalankan pengecekan lokasi setiap 5 detik
+    if (document.getElementById('location-status')) {
+        updateLocation();
+        setInterval(updateLocation, 5000);
+    }
+</script>
 {% endblock %}

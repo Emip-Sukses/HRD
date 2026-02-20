@@ -61,6 +61,12 @@ class Attendance(models.Model):
     check_out = models.TimeField(null=True, blank=True, verbose_name="Jam Pulang")
     # Status default adalah 'Hadir', bisa dikembangkan untuk 'Sakit', 'Izin', dsb.
     status = models.CharField(max_length=20, default='Hadir', verbose_name="Status")
+    
+    # Koordinat Lokasi Absensi
+    lat_in = models.FloatField(null=True, blank=True, verbose_name="Lat Masuk")
+    lon_in = models.FloatField(null=True, blank=True, verbose_name="Lon Masuk")
+    lat_out = models.FloatField(null=True, blank=True, verbose_name="Lat Pulang")
+    lon_out = models.FloatField(null=True, blank=True, verbose_name="Lon Pulang")
 
     def __str__(self):
         # Representasi string untuk log absensi
