@@ -134,8 +134,10 @@
 {% endif %}
 
 <script>
-    const officeLat = -6.9242479;
-    const officeLon = 107.7147351;
+    const locations = [
+        { name: "Kantor Utama", lat: -6.9242479, lon: 107.7147351 },
+        { name: "Gudang", lat: -6.92453208361585, lon: 107.71120702873829 }
+    ];
     const allowedRadius = 100; // dalam meter
 
     function getDistance(lat1, lon1, lat2, lon2) {
@@ -171,18 +173,33 @@
             (position) => {
                 const userLat = position.coords.latitude;
                 const userLon = position.coords.longitude;
-                const distance = getDistance(userLat, userLon, officeLat, officeLon);
+
+                let isInRange = false;
+                let minDistance = Infinity;
+                let closestLocation = "";
+
+                // Cek ke setiap lokasi terdaftar
+                locations.forEach(loc => {
+                    const dist = getDistance(userLat, userLon, loc.lat, loc.lon);
+                    if (dist < minDistance) {
+                        minDistance = dist;
+                        closestLocation = loc.name;
+                    }
+                    if (dist <= allowedRadius) {
+                        isInRange = true;
+                    }
+                });
 
                 inputsLat.forEach(input => input.value = userLat);
                 inputsLon.forEach(input => input.value = userLon);
 
-                if (distance <= allowedRadius) {
+                if (isInRange) {
                     statusDiv.className = "alert alert-success py-2 mb-4 d-flex align-items-center";
-                    statusDiv.innerHTML = `<i class="fas fa-check-circle me-2"></i> Anda berada di area kantor (${Math.round(distance)}m).`;
+                    statusDiv.innerHTML = `<i class="fas fa-check-circle me-2"></i> Anda berada di area ${closestLocation} (${Math.round(minDistance)}m).`;
                     btnAbsen.disabled = false;
                 } else {
                     statusDiv.className = "alert alert-danger py-2 mb-4 d-flex align-items-center";
-                    statusDiv.innerHTML = `<i class="fas fa-map-marker-alt me-2"></i> Anda di luar area (${Math.round(distance)}m). Silakan masuk ke kantor.`;
+                    statusDiv.innerHTML = `<i class="fas fa-map-marker-alt me-2"></i> Anda di luar area (${Math.round(minDistance)}m dari ${closestLocation}).`;
                     btnAbsen.disabled = true;
                 }
             },

@@ -8,8 +8,10 @@ from django.contrib.auth.decorators import login_required
 import math
 
 # Konfigurasi Geolocation Kantor
-OFFICE_LAT = -6.9242479
-OFFICE_LON = 107.7147351
+LOCATIONS = [
+    {"name": "Kantor Utama", "lat": -6.9242479, "lon": 107.7147351},
+    {"name": "Gudang", "lat": -6.92453208361585, "lon": 107.71120702873829},
+]
 ALLOWED_RADIUS = 100  # dalam meter
 
 def calculate_distance(lat1, lon1, lat2, lon2):
@@ -118,10 +120,23 @@ def index(request):
             messages.error(request, "Data lokasi tidak valid.")
             return redirect('index')
 
-        # 2. Validasi Jarak ke Kantor
-        distance = calculate_distance(lat, lon, OFFICE_LAT, OFFICE_LON)
-        if distance > ALLOWED_RADIUS:
-            messages.error(request, f"Akses Ditolak: Anda berada di luar area kantor ({int(distance)} meter dari titik pusat).")
+        # 2. Validasi Jarak ke Kantor/Gudang
+        is_in_range = False
+        min_distance = float('inf')
+        location_name = ""
+
+        for loc in LOCATIONS:
+            dist = calculate_distance(lat, lon, loc['lat'], loc['lon'])
+            if dist < min_distance:
+                min_distance = dist
+                location_name = loc['name']
+            
+            if dist <= ALLOWED_RADIUS:
+                is_in_range = True
+                break
+
+        if not is_in_range:
+            messages.error(request, f"Akses Ditolak: Anda berada di luar area ({int(min_distance)} meter dari titik terdekat).")
             return redirect('index')
 
         if aksi == "masuk":
