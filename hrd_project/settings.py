@@ -39,6 +39,7 @@ CSRF_TRUSTED_ORIGINS = ['http://localhost:8010', 'http://127.0.0.1:8010']
 # Application definition
 
 INSTALLED_APPS = [
+    'jazzmin',
     'hrd_app',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -142,3 +143,65 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/login/'
+
+# Jazzmin Settings
+JAZZMIN_SETTINGS = {
+    "site_title": "HRD Admin",
+    "site_header": "HRD Management",
+    "site_brand": "HRD Portal",
+    "welcome_sign": "Selamat Datang di Management Portal HRD",
+    "copyright": "HRD System 2026",
+    "user_avatar": None,
+    # Menu Configuration
+    "topmenu_links": [
+        {"name": "Home",  "url": "admin:index", "permissions": ["auth.view_user"]},
+        {"name": "Lihat Website", "url": "/", "new_window": True},
+    ],
+    "show_sidebar": True,
+    "navigation_expanded": True,
+    "icons": {
+        "auth": "fas fa-users-cog",
+        "auth.user": "fas fa-user",
+        "auth.Group": "fas fa-users",
+        "hrd_app.Employee": "fas fa-user-tie",
+        "hrd_app.Department": "fas fa-building",
+        "hrd_app.Attendance": "fas fa-calendar-check",
+    },
+    "default_icon_parents": "fas fa-chevron-circle-right",
+    "default_icon_children": "fas fa-circle",
+    "custom_css": "hrd_app/css/admin_custom.css",
+    "use_google_fonts_cdn": True,
+    "show_ui_builder": False,
+}
+
+JAZZMIN_UI_TWEAKS = {
+    "navbar_small_text": False,
+    "footer_small_text": False,
+    "body_small_text": False,
+    "brand_small_text": False,
+    "brand_colour": "navbar-primary",
+    "accent": "accent-primary",
+    "navbar": "navbar-dark",
+    "no_navbar_border": False,
+    "navbar_fixed": True,
+    "layout_boxed": False,
+    "footer_fixed": False,
+    "sidebar_fixed": True,
+    "sidebar": "sidebar-dark-primary",
+    "sidebar_nav_small_text": False,
+    "sidebar_disable_expand": False,
+    "sidebar_nav_child_indent": False,
+    "sidebar_nav_compact_style": False,
+    "sidebar_nav_legacy_style": False,
+    "sidebar_nav_flat_style": False,
+    "theme": "flatly",
+    "dark_mode_theme": None,
+    "button_classes": {
+        "primary": "btn-primary",
+        "secondary": "btn-secondary",
+        "info": "btn-info",
+        "warning": "btn-warning",
+        "danger": "btn-danger",
+        "success": "btn-success"
+    }
+}

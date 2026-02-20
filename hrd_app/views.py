@@ -154,3 +154,41 @@ def riwayat_saya(request):
     histori = Attendance.objects.filter(employee=employee).order_by('-date')[:30]
     
     return render(request, 'hrd_app/riwayat_saya.html', {'histori': histori})
+
+@login_required
+def ganti_password(request):
+    """
+    Karyawan bisa mengganti password mereka sendiri secara mandiri.
+    """
+    if request.method == "POST":
+        password_lama = request.POST.get('password_lama')
+        password_baru = request.POST.get('password_baru')
+        konfirmasi_password = request.POST.get('konfirmasi_password')
+        
+        # 1. Validasi Password Lama
+        if not request.user.check_password(password_lama):
+            messages.error(request, "Password lama yang Anda masukkan salah!")
+            return redirect('ganti_password')
+            
+        # 2. Validasi Kesamaan Password Baru
+        if password_baru != konfirmasi_password:
+            messages.error(request, "Konfirmasi password baru tidak cocok!")
+            return redirect('ganti_password')
+            
+        # 3. Validasi Panjang Password
+        if len(password_baru) < 8:
+            messages.error(request, "Password baru minimal harus 8 karakter!")
+            return redirect('ganti_password')
+            
+        # 4. Simpan Password Baru
+        request.user.set_password(password_baru)
+        request.user.save()
+        
+        # Penting: Setelah ganti password, sesi login akan terputus kecuali kita update session hash
+        from django.contrib.auth import update_session_auth_hash
+        update_session_auth_hash(request, request.user)
+        
+        messages.success(request, "Password Anda berhasil diperbarui!")
+        return redirect('index')
+        
+    return render(request, 'hrd_app/ganti_password.html')
