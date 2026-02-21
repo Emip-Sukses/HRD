@@ -67,6 +67,10 @@ class Attendance(models.Model):
     lon_in = models.FloatField(null=True, blank=True, verbose_name="Lon Masuk")
     lat_out = models.FloatField(null=True, blank=True, verbose_name="Lat Pulang")
     lon_out = models.FloatField(null=True, blank=True, verbose_name="Lon Pulang")
+    
+    # Foto Selfie
+    photo_in = models.ImageField(upload_to='attendance/%Y/%m/%d/', null=True, blank=True, verbose_name="Foto Masuk")
+    photo_out = models.ImageField(upload_to='attendance/%Y/%m/%d/', null=True, blank=True, verbose_name="Foto Pulang")
 
     def __str__(self):
         # Representasi string untuk log absensi

@@ -11,6 +11,7 @@ dependencies = [
     "gunicorn",
     "whitenoise",
     "django-jazzmin",
+    "Pillow",
 ]
 
 [build-system]

@@ -22,6 +22,7 @@
                 <th class="py-3 px-4">Departemen</th>
                 <th class="py-3 px-4 text-center">Jam Masuk</th>
                 <th class="py-3 px-4 text-center">Jam Pulang</th>
+                <th class="py-3 px-4 text-center">Foto Selfie</th>
                 <th class="py-3 px-4 text-center">Status</th>
             </tr>
         </thead>
@@ -40,6 +41,23 @@
                     {% else %}
                     <span class="text-muted italic small">Belum Pulang</span>
                     {% endif %}
+                </td>
+                <td class="py-3 px-4 align-middle text-center">
+                    <div class="d-flex justify-content-center gap-2">
+                        {% if item.photo_in %}
+                        <a href="{{ item.photo_in.url }}" target="_blank">
+                            <img src="{{ item.photo_in.url }}" class="rounded border shadow-sm"
+                                style="width: 35px; height: 35px; object-fit: cover;" title="Foto Masuk">
+                        </a>
+                        {% else %}-{% endif %}
+
+                        {% if item.photo_out %}
+                        <a href="{{ item.photo_out.url }}" target="_blank">
+                            <img src="{{ item.photo_out.url }}" class="rounded border shadow-sm"
+                                style="width: 35px; height: 35px; object-fit: cover;" title="Foto Pulang">
+                        </a>
+                        {% endif %}
+                    </div>
                 </td>
                 <td class="py-3 px-4 align-middle text-center">
                     {% if item.check_out %}

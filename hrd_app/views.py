@@ -6,6 +6,8 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required 
 import math
+import base64
+from django.core.files.base import ContentFile
 
 # Konfigurasi Geolocation Kantor
 LOCATIONS = [
@@ -113,6 +115,12 @@ def index(request):
             messages.error(request, "Gagal mendeteksi lokasi. Pastikan GPS aktif dan izinkan akses lokasi di browser.")
             return redirect('index')
 
+        # 1.5 Validasi Foto
+        photo_data = request.POST.get('photo')
+        if not photo_data:
+            messages.error(request, "Gagal mengambil foto. Silakan coba lagi dan pastikan kamera aktif.")
+            return redirect('index')
+
         try:
             lat = float(lat)
             lon = float(lon)
@@ -140,6 +148,11 @@ def index(request):
             return redirect('index')
 
         if aksi == "masuk":
+            # Proses Foto Base64
+            format, imgstr = photo_data.split(';base64,')
+            ext = format.split('/')[-1]
+            photo_file = ContentFile(base64.b64decode(imgstr), name=f"in_{employee.employee_id}_{today}.{ext}")
+
             # get_or_create memastikan tidak ada duplikasi data absensi di hari yang sama
             obj, created = Attendance.objects.get_or_create(
                 employee=employee,
@@ -147,7 +160,8 @@ def index(request):
                 defaults={
                     'check_in': timezone.localtime().time(),
                     'lat_in': lat,
-                    'lon_in': lon
+                    'lon_in': lon,
+                    'photo_in': photo_file
                 }
             )
             if created:
@@ -160,9 +174,15 @@ def index(request):
             absen = Attendance.objects.filter(employee=employee, date=today).first()
             if absen:
                 if not absen.check_out:
+                    # Proses Foto Base64
+                    format, imgstr = photo_data.split(';base64,')
+                    ext = format.split('/')[-1]
+                    photo_file = ContentFile(base64.b64decode(imgstr), name=f"out_{employee.employee_id}_{today}.{ext}")
+
                     absen.check_out = timezone.localtime().time()
                     absen.lat_out = lat
                     absen.lon_out = lon
+                    absen.photo_out = photo_file
                     absen.save()
                     messages.info(request, f"Absen pulang berhasil pada pukul {absen.check_out.strftime('%H:%M:%S')}. Hati-hati di jalan!")
                 else:

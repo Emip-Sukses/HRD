@@ -34,6 +34,21 @@ body {
     background: transparent !important;
 }
 
+/* Memperjelas Teks Navbar & Header */
+.main-header .nav-link,
+.main-header .navbar-brand,
+.content-header h1,
+.breadcrumb-item a,
+.breadcrumb-item.active {
+    color: #1e293b !important;
+    /* Biru gelap kehitaman */
+    font-weight: 600 !important;
+}
+
+.main-header .nav-link:hover {
+    color: var(--primary-color) !important;
+}
+
 /* Card Styling */
 .card {
     background: var(--card-bg) !important;

@@ -33,7 +33,7 @@ DEBUG = os.getenv('DEBUG', 'False') == 'True'
 # Mengizinkan akses dari semua host (layanan WSL/Local Network)
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
 
-CSRF_TRUSTED_ORIGINS = ['http://localhost:8010', 'http://127.0.0.1:8010']
+CSRF_TRUSTED_ORIGINS = ['http://localhost:8010', 'http://127.0.0.1:8010', 'https://*.trycloudflare.com']
 
 
 # Application definition
@@ -138,6 +138,10 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
+# Media files (Uploaded photos)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
 # Login Settings
 # Login Settings
 LOGIN_URL = '/login/'
@@ -155,6 +159,7 @@ JAZZMIN_SETTINGS = {
     # Menu Configuration
     "topmenu_links": [
         {"name": "Home",  "url": "admin:index", "permissions": ["auth.view_user"]},
+        {"name": "Rekap Absensi", "url": "/rekap/"},
         {"name": "Lihat Website", "url": "/", "new_window": True},
     ],
     "show_sidebar": True,
@@ -169,7 +174,8 @@ JAZZMIN_SETTINGS = {
     },
     "default_icon_parents": "fas fa-chevron-circle-right",
     "default_icon_children": "fas fa-circle",
-    "custom_css": "hrd_app/css/admin_custom.css",
+    "custom_js": "hrd_app/js/admin_recap_button.js",
+    "custom_css": "hrd_app/css/admin_glass_v2.css",
     "use_google_fonts_cdn": True,
     "show_ui_builder": False,
 }
@@ -179,23 +185,23 @@ JAZZMIN_UI_TWEAKS = {
     "footer_small_text": False,
     "body_small_text": False,
     "brand_small_text": False,
-    "brand_colour": "navbar-primary",
+    "brand_colour": "navbar-dark",
     "accent": "accent-primary",
     "navbar": "navbar-dark",
-    "no_navbar_border": False,
+    "no_navbar_border": True,
     "navbar_fixed": True,
     "layout_boxed": False,
     "footer_fixed": False,
     "sidebar_fixed": True,
-    "sidebar": "sidebar-dark-primary",
+    "sidebar": "sidebar-dark-navy",
     "sidebar_nav_small_text": False,
     "sidebar_disable_expand": False,
-    "sidebar_nav_child_indent": False,
+    "sidebar_nav_child_indent": True,
     "sidebar_nav_compact_style": False,
     "sidebar_nav_legacy_style": False,
-    "sidebar_nav_flat_style": False,
-    "theme": "flatly",
-    "dark_mode_theme": None,
+    "sidebar_nav_flat_style": True,
+    "theme": "darkly",
+    "dark_mode_theme": "darkly",
     "button_classes": {
         "primary": "btn-primary",
         "secondary": "btn-secondary",

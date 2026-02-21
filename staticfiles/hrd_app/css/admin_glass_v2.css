@@ -1,0 +1,202 @@
+/* HR Glass Portal V2 - Dark Navy Modern Theme */
+:root {
+    --bg-main: linear-gradient(135deg, #0f172a, #1e293b);
+    --glass-bg: rgba(255, 255, 255, 0.05);
+    --glass-border: 1px solid rgba(255, 255, 255, 0.08);
+    --text-primary: #e2e8f0;
+    --text-secondary: #94a3b8;
+    --accent-blue-start: #3b82f6;
+    --accent-blue-end: #2563eb;
+    --radius-xl: 18px;
+    --radius-md: 12px;
+}
+
+html,
+body,
+.wrapper {
+    background: #0f172a !important;
+    /* Base Dark Navy */
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%) fixed !important;
+    color: var(--text-primary) !important;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+    min-height: 100vh;
+}
+
+/* Sidebar & Header Navigation - Dipekatkan agar selaras */
+.main-sidebar,
+.main-sidebar .sidebar {
+    background: #0f172a !important;
+    background: linear-gradient(180deg, #0f172a 0%, #111827 100%) !important;
+    border-right: var(--glass-border) !important;
+}
+
+/* Fix for Sidebar Brand & User Panel Background */
+.brand-link,
+.user-panel {
+    background: transparent !important;
+    border-bottom: var(--glass-border) !important;
+}
+
+.brand-link {
+    background: #0f172a !important;
+    /* Match Sidebar top color */
+}
+
+.main-header {
+    background: #111827 !important;
+    /* Deep Navy Solid */
+    border-bottom: var(--glass-border) !important;
+}
+
+.main-header .nav-link {
+    color: var(--text-secondary) !important;
+}
+
+.main-header .nav-link:hover {
+    color: var(--text-primary) !important;
+}
+
+/* Dashboard Cards - Glass Structure */
+.content-wrapper {
+    background: transparent !important;
+}
+
+.glass-card,
+.stat-card {
+    background: var(--glass-bg) !important;
+    border: var(--glass-border) !important;
+    backdrop-filter: blur(15px) !important;
+    border-radius: var(--radius-xl) !important;
+    padding: 1.5rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.glass-card:hover,
+.stat-card:hover {
+    transform: translateY(-4px);
+    background: rgba(255, 255, 255, 0.08) !important;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* Specific Summary Card Icons */
+.summary-icon {
+    border-radius: 12px;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon-blue {
+    background: rgba(59, 130, 246, 0.1);
+    color: #60a5fa;
+}
+
+.icon-indigo {
+    background: rgba(99, 102, 241, 0.1);
+    color: #818cf8;
+}
+
+.icon-green {
+    background: rgba(16, 185, 129, 0.1);
+    color: #34d399;
+}
+
+.icon-orange {
+    background: rgba(245, 158, 11, 0.1);
+    color: #fbbf24;
+}
+
+/* Dashboard Action Box */
+.action-item {
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    border-radius: var(--radius-md) !important;
+    padding: 1rem 1.25rem !important;
+    color: var(--text-primary) !important;
+    transition: all 0.2s ease;
+}
+
+.action-item:hover {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border-color: var(--accent-blue-start) !important;
+    transform: translateX(4px);
+}
+
+/* Button Normalization - Navy Modern Style */
+.btn-primary,
+.btn-modern-primary,
+.btn-success,
+.addlink,
+.changelink,
+.btn-info {
+    border-radius: var(--radius-md) !important;
+    font-weight: 600 !important;
+    padding: 0.6rem 1.2rem !important;
+    border: none !important;
+    transition: all 0.2s ease !important;
+    font-size: 0.9rem !important;
+}
+
+/* Primary Styling (Blue Gradient) */
+.btn-primary,
+.btn-modern-primary,
+.addlink {
+    background: linear-gradient(135deg, var(--accent-blue-start), var(--accent-blue-end)) !important;
+    color: #ffffff !important;
+}
+
+.btn-primary:hover,
+.btn-modern-primary:hover,
+.addlink:hover {
+    filter: brightness(1.1);
+    transform: translateY(-2px);
+}
+
+/* Secondary Styling (Ghost/Glass) */
+.btn-modern-neutral,
+.changelink,
+.btn-info {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    color: #ffffff !important;
+}
+
+.btn-modern-neutral:hover,
+.changelink:hover,
+.btn-info:hover {
+    background: rgba(255, 255, 255, 0.15) !important;
+}
+
+/* Tables in Admin Mode */
+.table {
+    color: var(--text-primary) !important;
+    background: transparent !important;
+}
+
+.table th {
+    background: rgba(0, 0, 0, 0.2) !important;
+    color: var(--text-secondary) !important;
+    border: none !important;
+}
+
+.table td {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03) !important;
+}
+
+/* Timeline Activity Log */
+.activity-content {
+    background: rgba(255, 255, 255, 0.02) !important;
+    border: var(--glass-border) !important;
+    border-radius: var(--radius-md);
+}
+
+.activity-user {
+    color: var(--accent-blue-start) !important;
+}
+
+.activity-time {
+    color: var(--text-secondary);
+}

@@ -50,13 +50,20 @@ class AttendanceAdmin(admin.ModelAdmin):
     """
     Log harian kehadiran karyawan.
     """
-    list_display = ('employee', 'date', 'check_in', 'check_out', 'status', 'location_info')
+    list_display = ('employee', 'date', 'check_in', 'check_out', 'photo_preview', 'status', 'location_info')
     # Filter berdasarkan tanggal dan status kehadiran
     list_filter = ('date', 'status', 'employee__department')
     # Pencarian berdasarkan nama karyawan
     search_fields = ('employee__name', 'employee__employee_id')
     # Urutan default: terbaru di atas
     ordering = ('-date', '-check_in')
+
+    @admin.display(description="Selfie")
+    def photo_preview(self, obj):
+        from django.utils.html import format_html
+        if obj.photo_in:
+            return format_html('<img src="{}" style="width: 35px; height: 35px; border-radius: 4px; object-fit: cover;" />', obj.photo_in.url)
+        return "-"
 
     @admin.display(description="Info Lokasi (Lat,Lon)")
     def location_info(self, obj):
