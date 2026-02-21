@@ -1,87 +1,92 @@
 {% extends 'hrd_app/base.html' %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <div>
-        <h2 class="fw-bold mb-1">Rekap Absensi Harian</h2>
-        <p class="text-muted mb-0">Laporan kehadiran karyawan untuk hari ini.</p>
+<div class="row align-items-center mb-5 mt-4">
+    <div class="col-md-8">
+        <h2 class="fw-bold text-white mb-2" style="letter-spacing: -1px;">Rekap Absensi Harian</h2>
+        <p class="text-muted">Laporan kehadiran seluruh karyawan hari ini.</p>
     </div>
-    <div class="text-end">
-        <span class="badge bg-primary fs-6 px-3 py-2">
-            <i class="fas fa-calendar-day me-1"></i> {{ today|date:"d F Y" }}
-        </span>
+    <div class="col-md-4 text-md-end">
+        <div class="p-3 glass-panel d-inline-block text-start"
+            style="border-radius: 12px; padding: 0.75rem 1.25rem !important;">
+            <span class="text-primary fw-bold small text-uppercase" style="letter-spacing: 1px;">Tanggal</span>
+            <h5 class="mb-0 fw-bold text-white">{{ today|date:"d F Y" }}</h5>
+        </div>
     </div>
 </div>
 
-<div class="table-responsive">
-    <table class="table table-hover border-top">
-        <thead class="bg-light">
-            <tr>
-                <th class="py-3 px-4">NIK</th>
-                <th class="py-3 px-4">Nama Karyawan</th>
-                <th class="py-3 px-4">Departemen</th>
-                <th class="py-3 px-4 text-center">Jam Masuk</th>
-                <th class="py-3 px-4 text-center">Jam Pulang</th>
-                <th class="py-3 px-4 text-center">Foto Selfie</th>
-                <th class="py-3 px-4 text-center">Status</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in laporan %}
-            <tr>
-                <td class="py-3 px-4 align-middle fw-semibold text-secondary small">{{ item.employee.employee_id }}</td>
-                <td class="py-3 px-4 align-middle fw-bold">{{ item.employee.name }}</td>
-                <td class="py-3 px-4 align-middle text-muted small">{{ item.employee.department.name|default:"-" }}</td>
-                <td class="py-3 px-4 align-middle text-center">
-                    <span class="text-success fw-bold">{{ item.check_in|time:"H:i" }}</span>
-                </td>
-                <td class="py-3 px-4 align-middle text-center">
-                    {% if item.check_out %}
-                    <span class="text-primary fw-bold">{{ item.check_out|time:"H:i" }}</span>
-                    {% else %}
-                    <span class="text-muted italic small">Belum Pulang</span>
-                    {% endif %}
-                </td>
-                <td class="py-3 px-4 align-middle text-center">
-                    <div class="d-flex justify-content-center gap-2">
-                        {% if item.photo_in %}
-                        <a href="{{ item.photo_in.url }}" target="_blank">
-                            <img src="{{ item.photo_in.url }}" class="rounded border shadow-sm"
-                                style="width: 35px; height: 35px; object-fit: cover;" title="Foto Masuk">
-                        </a>
-                        {% else %}-{% endif %}
-
-                        {% if item.photo_out %}
-                        <a href="{{ item.photo_out.url }}" target="_blank">
-                            <img src="{{ item.photo_out.url }}" class="rounded border shadow-sm"
-                                style="width: 35px; height: 35px; object-fit: cover;" title="Foto Pulang">
-                        </a>
+<div class="card card-body p-0 overflow-hidden shadow-lg mb-4">
+    <div class="table-responsive">
+        <table class="table align-middle mb-0">
+            <thead>
+                <tr>
+                    <th class="px-4 py-3">NIK</th>
+                    <th class="px-4 py-3">Karyawan</th>
+                    <th class="px-4 py-3">Departemen</th>
+                    <th class="px-4 py-3 text-center">Masuk</th>
+                    <th class="px-4 py-3 text-center">Pulang</th>
+                    <th class="px-4 py-3 text-center">Selfie</th>
+                    <th class="px-4 py-3 text-center">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in laporan %}
+                <tr>
+                    <td class="py-3 px-4 align-middle fw-semibold text-secondary small">{{ item.employee.employee_id }}
+                    </td>
+                    <td class="py-3 px-4 align-middle fw-bold">{{ item.employee.name }}</td>
+                    <td class="py-3 px-4 align-middle text-muted small">{{ item.employee.department.name|default:"-" }}
+                    </td>
+                    <td class="py-3 px-4 align-middle text-center">
+                        <span class="text-success fw-bold">{{ item.check_in|time:"H:i" }}</span>
+                    </td>
+                    <td class="py-3 px-4 align-middle text-center">
+                        {% if item.check_out %}
+                        <span class="text-primary fw-bold">{{ item.check_out|time:"H:i" }}</span>
+                        {% else %}
+                        <span class="text-muted italic small">Belum Pulang</span>
                         {% endif %}
-                    </div>
-                </td>
-                <td class="py-3 px-4 align-middle text-center">
-                    {% if item.check_out %}
-                    <span class="badge rounded-pill bg-success-subtle text-success px-3">Selesai</span>
-                    {% else %}
-                    <span class="badge rounded-pill bg-warning-subtle text-warning px-3">Aktif</span>
-                    {% endif %}
-                </td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="6" class="text-center py-5 text-muted">
-                    <i class="fas fa-clipboard-list fa-3x mb-3 d-block opacity-25"></i>
-                    Belum ada data absensi untuk hari ini.
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
+                    </td>
+                    <td class="py-3 px-4 align-middle text-center">
+                        <div class="d-flex justify-content-center gap-2">
+                            {% if item.photo_in %}
+                            <a href="{{ item.photo_in.url }}" target="_blank">
+                                <img src="{{ item.photo_in.url }}" class="rounded border shadow-sm"
+                                    style="width: 35px; height: 35px; object-fit: cover;" title="Foto Masuk">
+                            </a>
+                            {% else %}-{% endif %}
 
-<div class="mt-4 d-flex justify-content-end">
-    <button onclick="window.print()" class="btn btn-outline-secondary shadow-sm">
-        <i class="fas fa-print me-2"></i> Cetak Laporan
-    </button>
-</div>
-{% endblock %}
+                            {% if item.photo_out %}
+                            <a href="{{ item.photo_out.url }}" target="_blank">
+                                <img src="{{ item.photo_out.url }}" class="rounded border shadow-sm"
+                                    style="width: 35px; height: 35px; object-fit: cover;" title="Foto Pulang">
+                            </a>
+                            {% endif %}
+                        </div>
+                    </td>
+                    <td class="py-3 px-4 align-middle text-center">
+                        {% if item.check_out %}
+                        <span class="badge rounded-pill bg-success-subtle text-success px-3">Selesai</span>
+                        {% else %}
+                        <span class="badge rounded-pill bg-warning-subtle text-warning px-3">Aktif</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center py-5 text-muted">
+                        <i class="fas fa-clipboard-list fa-3x mb-3 d-block opacity-25"></i>
+                        Belum ada data absensi untuk hari ini.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="mt-4 d-flex justify-content-end">
+        <button onclick="window.print()" class="btn btn-outline-secondary shadow-sm">
+            <i class="fas fa-print me-2"></i> Cetak Laporan
+        </button>
+    </div>
+    {% endblock %}

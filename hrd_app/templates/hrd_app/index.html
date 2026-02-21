@@ -2,22 +2,21 @@
 {% load static %}
 
 {% block content %}
-<div class="row align-items-center mb-5">
+<div class="row align-items-center mb-5 mt-4">
     <div class="col-md-8">
-        <!-- Greeting removed -->
-        <p class="text-muted fs-5">
-            <span class="badge bg-light text-dark border me-2">
+        <p class="text-muted d-flex gap-2 flex-wrap">
+            <span class="badge bg-light">
                 <i class="fas fa-briefcase me-1 text-primary"></i> {{ employee.department.name|default:"Umum" }}
             </span>
-            <span class="badge bg-light text-dark border">
+            <span class="badge bg-light">
                 <i class="fas fa-id-badge me-1 text-primary"></i> ID: {{ employee.employee_id|default:"-" }}
             </span>
         </p>
     </div>
     <div class="col-md-4 text-md-end">
-        <div class="p-3 glass-panel d-inline-block text-start">
-            <h6 class="text-uppercase text-muted small fw-bold mb-1">Hari Ini</h6>
-            <h4 class="mb-0 fw-bold text-dark">{{ today|date:"l, d F Y" }}</h4>
+        <div class="p-3 glass-panel d-inline-block text-start" style="border-radius: 16px;">
+            <h6 class="text-uppercase text-muted small fw-bold mb-1" style="letter-spacing: 1px;">Hari Ini</h6>
+            <h4 class="mb-0 fw-bold text-white">{{ today|date:"l" }}, {{ today|date:"d F Y" }}</h4>
         </div>
     </div>
 </div>
@@ -25,115 +24,114 @@
 {% if employee %}
 <div class="row justify-content-center">
     <div class="col-lg-6">
-        <div class="card border-0 shadow-lg overflow-hidden">
-            <div class="card-body p-5">
-                <form method="POST" id="attendance-form">
-                    {% csrf_token %}
+        <div class="card card-body shadow-lg">
+            <form method="POST" id="attendance-form">
+                {% csrf_token %}
 
-                    {% if not absen or not absen.check_out %}
-                    <!-- Lokasi Status -->
-                    <div id="location-status" class="alert alert-info py-2 mb-4 d-flex align-items-center"
-                        style="font-size: 0.85rem;">
-                        <i class="fas fa-spinner fa-spin me-2"></i> Mengambil data lokasi...
-                    </div>
-                    {% endif %}
+                {% if not absen or not absen.check_out %}
+                <div id="location-status" class="alert alert-info d-flex align-items-center mb-4">
+                    <i class="fas fa-spinner fa-spin me-2"></i> Mengambil data lokasi...
+                </div>
+                {% endif %}
 
-                    {% if not absen %}
-                    <!-- Belum Absen Masuk -->
-                    <div class="text-center py-2">
-                        <div class="mb-4">
-                            <div id="camera-container" class="position-relative mx-auto rounded-circle overflow-hidden shadow-lg border-primary" 
-                                 style="width: 220px; height: 220px; border: 4px solid;">
-                                <video id="webcam" autoplay playsinline class="w-100 h-100" style="object-fit: cover; transform: scaleX(-1);"></video>
-                                <canvas id="photo-canvas" style="display:none;"></canvas>
-                                <div id="camera-loading" class="position-absolute top-50 start-50 translate-middle text-primary">
-                                    <i class="fas fa-camera fa-2x animate-pulse"></i>
-                                </div>
-                            </div>
-                            <p class="small text-muted mt-2"><i class="fas fa-info-circle me-1"></i> Posisikan wajah di tengah lingkaran</p>
-                        </div>
-                        
-                        <h3 class="fw-bold mb-2">Absen Masuk</h3>
-                        <p class="text-muted mb-4">Pastikan wajah terlihat jelas sebelum menekan tombol.</p>
-
-                        <!-- Input Tersembunyi untuk Lokasi & Foto -->
-                        <input type="hidden" name="lat" id="id_lat">
-                        <input type="hidden" name="lon" id="id_lon">
-                        <input type="hidden" name="photo" id="id_photo">
-
-                        <button type="submit" name="aksi" value="masuk" id="btn-absen" disabled
-                            class="btn btn-primary btn-lg px-5 py-3 w-100 rounded-pill shadow-sm transition-transform hover-scale">
-                            <i class="fas fa-sign-in-alt me-2"></i> ABSEN MASUK
-                        </button>
-                    </div>
-
-                    {% elif not absen.check_out %}
-                    <!-- Sudah Absen Masuk, Belum Pulang -->
-                    <div class="text-center py-2">
-                        <div class="mb-4">
-                            <div id="camera-container" class="position-relative mx-auto rounded-circle overflow-hidden shadow-lg border-warning" 
-                                 style="width: 220px; height: 220px; border: 4px solid;">
-                                <video id="webcam" autoplay playsinline class="w-100 h-100" style="object-fit: cover; transform: scaleX(-1);"></video>
-                                <canvas id="photo-canvas" style="display:none;"></canvas>
+                {% if not absen %}
+                {# BELUM ABSEN MASUK #}
+                <div class="text-center">
+                    <div class="mb-4">
+                        <div id="camera-container"
+                            class="position-relative mx-auto rounded-circle overflow-hidden shadow-lg"
+                            style="width: 240px; height: 240px; border: 4px solid #2563eb; background: #000;">
+                            <video id="webcam" autoplay playsinline class="w-100 h-100"
+                                style="object-fit: cover; transform: scaleX(-1);"></video>
+                            <canvas id="photo-canvas" style="display:none;"></canvas>
+                            <div id="camera-loading"
+                                class="position-absolute top-50 start-50 translate-middle text-primary">
+                                <i class="fas fa-camera fa-2x animate-pulse"></i>
                             </div>
                         </div>
-
-                        <div class="glass-panel mb-4 d-inline-block px-4 py-2">
-                            <small class="text-muted d-block text-uppercase fw-bold mb-1">Masuk: {{ absen.check_in|time:"H:i" }}</small>
-                            <h4 class="fw-bold text-dark mb-0">Waktunya Pulang?</h4>
-                        </div>
-
-                        <!-- Input Tersembunyi untuk Lokasi & Foto -->
-                        <input type="hidden" name="lat" id="id_lat">
-                        <input type="hidden" name="lon" id="id_lon">
-                        <input type="hidden" name="photo" id="id_photo">
-
-                        <button type="submit" name="aksi" value="pulang" id="btn-absen" disabled
-                            class="btn btn-warning btn-lg px-5 py-3 w-100 rounded-pill shadow-sm text-white transition-transform hover-scale">
-                            <i class="fas fa-home me-2"></i> ABSEN PULANG
-                        </button>
+                        <p class="small text-muted mt-3">
+                            <i class="fas fa-info-circle me-1"></i> Wajah di tengah lingkaran
+                        </p>
                     </div>
 
-                    {% else %}
-                    <!-- Selesai Absen Hari Ini -->
-                    <div class="text-center py-4">
-                        <div class="mb-4">
-                            <i class="fas fa-check-circle fa-5x text-success mb-3 animate-fade-in"></i>
-                            <h3 class="fw-bold text-dark">Data Tersimpan!</h3>
-                            <p class="text-muted">Terima kasih atas dedikasi Anda hari ini.</p>
-                        </div>
+                    <h3 class="fw-bold text-white mb-1">Absen Masuk</h3>
+                    <p class="text-muted small mb-4">Pastikan pencahayaan cukup sebelum menekan tombol.</p>
 
-                        <div class="row g-3 justify-content-center mt-4">
-                            <div class="col-6">
-                                <div class="p-3 rounded-3 bg-light border text-center">
-                                    <small class="text-muted d-block mb-1">Masuk</small>
-                                    <h5 class="fw-bold text-success mb-0">{{ absen.check_in|time:"H:i" }}</h5>
-                                </div>
-                            </div>
-                            <div class="col-6">
-                                <div class="p-3 rounded-3 bg-light border text-center">
-                                    <small class="text-muted d-block mb-1">Pulang</small>
-                                    <h5 class="fw-bold text-warning mb-0">{{ absen.check_out|time:"H:i" }}</h5>
-                                </div>
-                            </div>
-                        </div>
+                    <input type="hidden" name="lat" id="id_lat">
+                    <input type="hidden" name="lon" id="id_lon">
+                    <input type="hidden" name="photo" id="id_photo">
 
-                        <div class="mt-5">
-                            <p class="text-muted small">
-                                <i class="fas fa-quote-left me-2 text-primary opacity-50"></i>
-                                Beristirahatlah, sampai jumpa besok!
-                            </p>
+                    <button type="submit" name="aksi" value="masuk" id="btn-absen" disabled
+                        class="btn btn-primary w-100 btn-lg shadow-lg">
+                        <i class="fas fa-sign-in-alt me-2"></i> ABSEN MASUK
+                    </button>
+                </div>
+
+                {% elif not absen.check_out %}
+                {# SUDAH MASUK, BELUM PULANG #}
+                <div class="text-center">
+                    <div class="mb-4">
+                        <div id="camera-container"
+                            class="position-relative mx-auto rounded-circle overflow-hidden shadow-lg"
+                            style="width: 240px; height: 240px; border: 4px solid #f59e0b; background: #000;">
+                            <video id="webcam" autoplay playsinline class="w-100 h-100"
+                                style="object-fit: cover; transform: scaleX(-1);"></video>
+                            <canvas id="photo-canvas" style="display:none;"></canvas>
                         </div>
                     </div>
-                    {% endif %}
-                </form>
-            </div>
+
+                    <div class="mb-4 d-inline-block px-4 py-2"
+                        style="background: rgba(255,255,255,0.03); border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);">
+                        <small class="text-muted d-block text-uppercase fw-bold mb-1">
+                            Masuk: {{ absen.check_in|time:"H:i" }}
+                        </small>
+                        <h4 class="fw-bold text-white mb-0">Waktunya Pulang?</h4>
+                    </div>
+
+                    <input type="hidden" name="lat" id="id_lat">
+                    <input type="hidden" name="lon" id="id_lon">
+                    <input type="hidden" name="photo" id="id_photo">
+
+                    <button type="submit" name="aksi" value="pulang" id="btn-absen" disabled
+                        class="btn btn-warning w-100 btn-lg shadow-lg">
+                        <i class="fas fa-home me-2"></i> ABSEN PULANG
+                    </button>
+                </div>
+
+                {% else %}
+                {# SELESAI ABSEN HARI INI #}
+                <div class="py-4 text-center">
+                    <div class="mb-4">
+                        <i class="fas fa-check-circle fa-5x text-success mb-3 animate-fade-in"
+                            style="filter: drop-shadow(0 0 15px rgba(16, 185, 129, 0.4));"></i>
+                        <h3 class="fw-bold text-white">Data Tersimpan!</h3>
+                        <p class="text-muted">Terima kasih atas kerja keras Anda hari ini.</p>
+                    </div>
+                    <div class="row g-3 justify-content-center mt-4">
+                        <div class="col-6">
+                            <div class="p-3"
+                                style="background: rgba(16, 185, 129, 0.05); border-radius: 12px; border: 1px solid rgba(16, 185, 129, 0.1);">
+                                <small class="text-muted d-block mb-1">Masuk</small>
+                                <h5 class="fw-bold text-success mb-0">{{ absen.check_in|time:"H:i" }}</h5>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-3"
+                                style="background: rgba(245, 158, 11, 0.05); border-radius: 12px; border: 1px solid rgba(245, 158, 11, 0.1);">
+                                <small class="text-muted d-block mb-1">Pulang</small>
+                                <h5 class="fw-bold text-warning mb-0">{{ absen.check_out|time:"H:i" }}</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+            </form>
         </div>
     </div>
 </div>
 
 {% else %}
-<!-- Error State -->
 <div class="alert alert-danger border-0 shadow-sm rounded-4 p-4 text-center" role="alert">
     <i class="fas fa-exclamation-triangle fa-3x text-danger mb-3"></i>
     <h4 class="fw-bold">Akun Belum Terhubung</h4>
@@ -150,146 +148,134 @@
         { name: "Kantor Utama", lat: -6.922175676770856, lon: 107.71524303884748 },
         { name: "Gudang", lat: -6.92453208361585, lon: 107.71120702873829 }
     ];
-    const allowedRadius = 100; // dalam meter
+    const allowedRadius = 100; // meter
 
     function getDistance(lat1, lon1, lat2, lon2) {
-        const R = 6371e3; // metres
+        const R = 6371e3;
         const φ1 = lat1 * Math.PI / 180;
         const φ2 = lat2 * Math.PI / 180;
         const Δφ = (lat2 - lat1) * Math.PI / 180;
         const Δλ = (lon2 - lon1) * Math.PI / 180;
-
         const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
             Math.cos(φ1) * Math.cos(φ2) *
             Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
-        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-        return R * c;
+        return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     }
 
     function startCamera() {
         const video = document.getElementById('webcam');
         if (!video) return;
-
-        navigator.mediaDevices.getUserMedia({ 
-            video: { 
-                width: { ideal: 640 },
-                height: { ideal: 480 },
-                facingMode: "user" 
-            } 
+        navigator.mediaDevices.getUserMedia({
+            video: { width: { ideal: 640 }, height: { ideal: 480 }, facingMode: "user" }
         })
-        .then(stream => {
-            video.srcObject = stream;
-            document.getElementById('camera-loading')?.classList.add('d-none');
-        })
-        .catch(err => {
-            console.error("Error akses kamera:", err);
-            const statusDiv = document.getElementById('location-status');
-            if (statusDiv) {
-                statusDiv.className = "alert alert-danger py-2 mb-4 d-flex align-items-center";
-                statusDiv.innerHTML = '<i class="fas fa-video-slash me-2"></i> Gagal akses kamera. Izinkan kamera untuk absen.';
-            }
-        });
+            .then(stream => {
+                video.srcObject = stream;
+                document.getElementById('camera-loading')?.classList.add('d-none');
+            })
+            .catch(err => {
+                console.error("Kamera gagal:", err);
+                const statusDiv = document.getElementById('location-status');
+                if (statusDiv) {
+                    statusDiv.className = "alert alert-danger d-flex align-items-center mb-4";
+                    statusDiv.innerHTML = '<i class="fas fa-video-slash me-2"></i> Gagal akses kamera. Izinkan kamera di browser.';
+                }
+            });
     }
 
     function capturePhoto() {
         const video = document.getElementById('webcam');
         const canvas = document.getElementById('photo-canvas');
         const photoInput = document.getElementById('id_photo');
-        
         if (!video || !canvas || !photoInput) return false;
-
-        // Set canvas size to video size
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        
-        const context = canvas.getContext('2d');
-        // Mirror horizontally to match preview
-        context.translate(canvas.width, 0);
-        context.scale(-1, 1);
-        context.drawImage(video, 0, 0, canvas.width, canvas.height);
-        
-        // Convert to base64 with compression
-        const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
-        photoInput.value = dataUrl;
+        canvas.width = video.videoWidth || 320;
+        canvas.height = video.videoHeight || 240;
+        const ctx = canvas.getContext('2d');
+        ctx.translate(canvas.width, 0);
+        ctx.scale(-1, 1);
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        photoInput.value = canvas.toDataURL('image/jpeg', 0.7);
         return true;
     }
 
-    // Intercept form submission to capture photo
     const form = document.getElementById('attendance-form');
     if (form) {
-        form.onsubmit = function(e) {
-            const success = capturePhoto();
-            if (!success) {
-                alert("Gagal mengambil foto. Silakan muat ulang halaman.");
+        form.onsubmit = function (e) {
+            if (!capturePhoto()) {
+                alert("Gagal mengambil foto. Muat ulang halaman.");
                 return false;
             }
             return true;
         };
     }
 
-    function updateLocation() {
+    function processPosition(position) {
         const statusDiv = document.getElementById('location-status');
         const btnAbsen = document.getElementById('btn-absen');
+        if (!statusDiv || !btnAbsen) return;
+
+        const userLat = position.coords.latitude;
+        const userLon = position.coords.longitude;
         const inputsLat = document.querySelectorAll('input[name="lat"]');
         const inputsLon = document.querySelectorAll('input[name="lon"]');
 
-        if (!statusDiv || !btnAbsen) return;
+        let isInRange = false;
+        let minDistance = Infinity;
+        let closestLocation = "";
 
-        if (!navigator.geolocation) {
-            statusDiv.className = "alert alert-danger py-2 mb-4 d-flex align-items-center";
-            statusDiv.innerHTML = '<i class="fas fa-times-circle me-2"></i> Browser tidak mendukung lokasi GPS.';
-            return;
+        locations.forEach(loc => {
+            const dist = getDistance(userLat, userLon, loc.lat, loc.lon);
+            if (dist < minDistance) { minDistance = dist; closestLocation = loc.name; }
+            if (dist <= allowedRadius) isInRange = true;
+        });
+
+        inputsLat.forEach(input => input.value = userLat);
+        inputsLon.forEach(input => input.value = userLon);
+
+        if (isInRange) {
+            statusDiv.className = "alert alert-success d-flex align-items-center mb-4";
+            statusDiv.innerHTML = `<i class="fas fa-check-circle me-2"></i> Lokasi OK: ${closestLocation}`;
+            btnAbsen.disabled = false;
+        } else {
+            statusDiv.className = "alert alert-danger d-flex align-items-center mb-4";
+            statusDiv.innerHTML = `<i class="fas fa-map-marker-alt me-2"></i> Di luar area (~${Math.round(minDistance)}m dari ${closestLocation})`;
+            btnAbsen.disabled = true;
         }
-
-        navigator.geolocation.getCurrentPosition(
-            (position) => {
-                const userLat = position.coords.latitude;
-                const userLon = position.coords.longitude;
-
-                let isInRange = false;
-                let minDistance = Infinity;
-                let closestLocation = "";
-
-                // Cek ke setiap lokasi terdaftar
-                locations.forEach(loc => {
-                    const dist = getDistance(userLat, userLon, loc.lat, loc.lon);
-                    if (dist < minDistance) {
-                        minDistance = dist;
-                        closestLocation = loc.name;
-                    }
-                    if (dist <= allowedRadius) {
-                        isInRange = true;
-                    }
-                });
-
-                inputsLat.forEach(input => input.value = userLat);
-                inputsLon.forEach(input => input.value = userLon);
-
-                if (isInRange) {
-                    statusDiv.className = "alert alert-success py-2 mb-4 d-flex align-items-center";
-                    statusDiv.innerHTML = `<i class="fas fa-check-circle me-2"></i> Lokasi OK: ${closestLocation} (${Math.round(minDistance)}m).`;
-                    btnAbsen.disabled = false;
-                } else {
-                    statusDiv.className = "alert alert-danger py-2 mb-4 d-flex align-items-center";
-                    statusDiv.innerHTML = `<i class="fas fa-map-marker-alt me-2"></i> Di luar area (${Math.round(minDistance)}m dari ${closestLocation}).`;
-                    btnAbsen.disabled = true;
-                }
-            },
-            (error) => {
-                statusDiv.className = "alert alert-warning py-2 mb-4 d-flex align-items-center";
-                statusDiv.innerHTML = '<i class="fas fa-exclamation-triangle me-2"></i> Harap izinkan akses lokasi untuk absen.';
-                btnAbsen.disabled = true;
-            },
-            { enableHighAccuracy: true }
-        );
     }
 
-    // Inisialisasi
+    function onGeoError(error) {
+        const statusDiv = document.getElementById('location-status');
+        const btnAbsen = document.getElementById('btn-absen');
+        if (!statusDiv || !btnAbsen) return;
+
+        let msg = "Gagal mendapatkan lokasi.";
+        if (error.code === 1) msg = "Izin lokasi ditolak! Klik ikon kunci di address bar browser, lalu izinkan.";
+        else if (error.code === 2) msg = "Lokasi tidak tersedia di perangkat ini.";
+        else if (error.code === 3) msg = "Timeout lokasi. Pastikan browser memiliki izin lokasi.";
+
+        statusDiv.className = "alert alert-warning d-flex align-items-center mb-4";
+        statusDiv.innerHTML = `<i class="fas fa-exclamation-triangle me-2"></i> ${msg}`;
+        btnAbsen.disabled = true;
+    }
+
+    // Inisialisasi sistem lokasi
     if (document.getElementById('location-status')) {
         startCamera();
-        updateLocation();
-        setInterval(updateLocation, 5000);
+
+        if (!navigator.geolocation) {
+            const statusDiv = document.getElementById('location-status');
+            if (statusDiv) {
+                statusDiv.className = "alert alert-danger d-flex align-items-center mb-4";
+                statusDiv.innerHTML = '<i class="fas fa-times-circle me-2"></i> Browser tidak mendukung GPS.';
+            }
+        } else {
+            // Pakai enableHighAccuracy: FALSE agar memakai Wi-Fi/Network (instan)
+            // bukan GPS satelit yang tidak tersedia di laptop dan sangat lambat indoor
+            navigator.geolocation.watchPosition(processPosition, onGeoError, {
+                enableHighAccuracy: false,
+                timeout: 8000,
+                maximumAge: 30000
+            });
+        }
     }
 </script>
 {% endblock %}

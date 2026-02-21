@@ -13,16 +13,20 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Custom CSS -->
-    <link href="{% static 'hrd_app/css/style.css' %}" rel="stylesheet">
+    <link href="{% static 'hrd_app/css/frontend_dark.css' %}" rel="stylesheet">
 </head>
 
-<body class="bg-light">
+<body class="d-flex flex-column">
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg sticky-top shadow-sm glass-panel py-3 mb-4">
+    <nav class="navbar navbar-expand-lg sticky-top py-3 mb-4">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center gap-2" href="{% url 'index' %}">
-                <i class="fas fa-fingerprint text-primary fs-3"></i>
-                <span class="fw-bold text-dark">HRD<span class="text-primary">App</span></span>
+                <div
+                    style="background: var(--accent-blue); width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white;">
+                    <i class="fas fa-fingerprint"></i>
+                </div>
+                <span class="fw-bold text-main" style="letter-spacing: -0.5px;">HRD <span
+                        style="color: var(--accent-blue);">App</span></span>
             </a>
             <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -98,9 +102,9 @@
     </div>
 
     <!-- Footer -->
-    <footer class="mt-auto py-3 text-center text-muted small">
+    <footer class="mt-auto py-4 text-center">
         <div class="container">
-            <p class="mb-0">&copy; {% now "Y" %} HRD App System. All rights reserved.</p>
+            <p class="mb-0 text-muted small">&copy; {% now "Y" %} HRD App System. All rights reserved.</p>
         </div>
     </footer>
 
