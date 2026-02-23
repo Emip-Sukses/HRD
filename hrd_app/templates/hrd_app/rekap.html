@@ -160,47 +160,42 @@
             print-color-adjust: exact;
         }
 
-        /* Lebar kolom */
+        /* Lebar kolom (Tanpa Foto) */
         .col-no {
-            width: 4%;
+            width: 5%;
             text-align: center;
         }
 
         .col-nik {
-            width: 10%;
+            width: 12%;
             text-align: center;
         }
 
         .col-nama {
-            width: 22%;
+            width: 30%;
             font-weight: bold;
         }
 
         .col-dept {
-            width: 16%;
+            width: 18%;
         }
 
         .col-masuk {
-            width: 10%;
+            width: 11%;
             text-align: center;
             font-weight: bold;
             color: #1a5c2a;
         }
 
         .col-pulang {
-            width: 10%;
+            width: 12%;
             text-align: center;
             font-weight: bold;
             color: #1a3d6e;
         }
 
         .col-status {
-            width: 10%;
-            text-align: center;
-        }
-
-        .col-foto {
-            width: 18%;
+            width: 12%;
             text-align: center;
         }
 
@@ -229,37 +224,6 @@
             print-color-adjust: exact;
         }
 
-        /* Foto */
-        .foto-wrap {
-            display: flex;
-            justify-content: center;
-            gap: 6pt;
-        }
-
-        .foto-wrap .foto-item {
-            text-align: center;
-        }
-
-        .foto-wrap img {
-            display: block;
-            width: 40pt;
-            height: 40pt;
-            object-fit: cover;
-            border: 1pt solid #aaa;
-            border-radius: 2pt;
-        }
-
-        .foto-wrap .foto-lbl {
-            display: block;
-            font-size: 6.5pt;
-            color: #666;
-            margin-top: 2pt;
-        }
-
-        .foto-none {
-            color: #aaa;
-            font-size: 7.5pt;
-        }
 
         /* === FOOTER TTD === */
         .footer-ttd {
@@ -448,7 +412,6 @@
                 <th class="col-masuk">Jam Masuk</th>
                 <th class="col-pulang">Jam Pulang</th>
                 <th class="col-status">Status</th>
-                <th class="col-foto">Foto Absensi</th>
             </tr>
         </thead>
         <tbody>
@@ -473,30 +436,10 @@
                     <span class="status-aktif">Aktif</span>
                     {% endif %}
                 </td>
-                <td class="col-foto">
-                    <div class="foto-wrap">
-                        <div class="foto-item">
-                            {% if item.photo_in %}
-                            <img src="{{ item.photo_in.url }}" alt="Masuk">
-                            <span class="foto-lbl">Masuk</span>
-                            {% else %}
-                            <span class="foto-none">-</span>
-                            {% endif %}
-                        </div>
-                        <div class="foto-item">
-                            {% if item.photo_out %}
-                            <img src="{{ item.photo_out.url }}" alt="Pulang">
-                            <span class="foto-lbl">Pulang</span>
-                            {% else %}
-                            <span class="foto-none">-</span>
-                            {% endif %}
-                        </div>
-                    </div>
-                </td>
             </tr>
             {% empty %}
             <tr>
-                <td colspan="8" style="text-align:center;padding:16pt;color:#999;font-style:italic;">
+                <td colspan="7" style="text-align:center;padding:16pt;color:#999;font-style:italic;">
                     Tidak ada data absensi untuk hari ini.
                 </td>
             </tr>
