@@ -10,6 +10,11 @@
         #print-area {
             display: none;
         }
+
+        .web-btns {
+            display: flex;
+            gap: 10px;
+        }
     }
 
     /* =============================================
@@ -17,6 +22,7 @@
    ============================================= */
     @media print {
 
+        /* Hilangkan semua UI Web */
         #web-area,
         nav,
         .navbar,
@@ -29,15 +35,17 @@
 
         @page {
             size: A4 portrait;
-            margin: 15mm;
+            margin: 20mm 15mm 20mm 15mm;
         }
 
         html,
         body {
             background: #fff !important;
-            color: #111 !important;
-            font-family: Arial, sans-serif !important;
+            color: #000 !important;
+            font-family: Arial, Helvetica, sans-serif !important;
             font-size: 10pt !important;
+            margin: 0 !important;
+            padding: 0 !important;
         }
 
         #print-area {
@@ -45,112 +53,121 @@
             width: 100%;
         }
 
-        .kop {
-            border-bottom: 2pt solid #111;
-            padding-bottom: 8pt;
+        /* KOP DOKUMEN - LEBIH SIMPEL */
+        .print-header {
+            border-bottom: 2pt solid #000;
+            padding-bottom: 5pt;
             margin-bottom: 15pt;
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
         }
 
-        .kop-kiri h1 {
+        .print-header h1 {
             font-size: 14pt;
             font-weight: bold;
             margin: 0;
+            text-transform: uppercase;
         }
 
-        .kop-kiri p {
+        .print-header p {
             font-size: 9pt;
-            color: #555;
             margin: 2pt 0 0 0;
+            color: #333;
         }
 
-        .kop-kanan {
-            text-align: right;
+        /* JUDUL LAPORAN */
+        .judul-laporan {
+            text-align: center;
+            margin-bottom: 15pt;
         }
 
-        .kop-kanan .judul {
+        .judul-laporan h2 {
             font-size: 12pt;
             font-weight: bold;
+            text-decoration: underline;
+            margin: 0;
         }
 
-        .kop-kanan .sub {
-            font-size: 8pt;
-            color: #666;
-            margin-top: 2pt;
-        }
-
-        .info-karyawan {
-            margin-bottom: 12pt;
-            padding: 8pt;
-            border: 1pt solid #ccc;
-            background: #f9f9f9;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15pt;
-        }
-
-        .info-item {
+        .judul-laporan p {
             font-size: 9pt;
+            margin: 3pt 0 0 0;
         }
 
-        .info-item strong {
-            color: #000;
+        /* INFO DATA */
+        .data-karyawan {
+            margin-bottom: 15pt;
+            width: 100%;
         }
 
-        table.histori-tabel {
+        .data-karyawan td {
+            padding: 2pt 0;
+            font-size: 9.5pt;
+        }
+
+        /* TABEL REKAP - BERSIH */
+        table.table-cetak {
             width: 100%;
             border-collapse: collapse;
+            border: 1pt solid #000;
         }
 
-        table.histori-tabel th {
-            background: #333 !important;
-            color: #fff !important;
-            -webkit-print-color-adjust: exact;
-            padding: 7pt;
-            border: 1pt solid #333;
+        table.table-cetak th {
+            border: 1pt solid #000;
+            padding: 8pt 5pt;
             font-size: 9pt;
+            font-weight: bold;
             text-align: center;
-        }
-
-        table.histori-tabel td {
-            padding: 7pt;
-            border: 1pt solid #ccc;
-            font-size: 9.5pt;
-            text-align: center;
-        }
-
-        table.histori-tabel tr:nth-child(even) {
-            background: #f5f5f5 !important;
+            background: #f0f0f0 !important;
             -webkit-print-color-adjust: exact;
         }
 
-        .status-badge {
-            padding: 2pt 6pt;
-            border-radius: 3pt;
-            font-size: 8pt;
-            font-weight: bold;
-            border: 1pt solid #aaa;
+        table.table-cetak td {
+            border: 1pt solid #000;
+            padding: 7pt 5pt;
+            font-size: 9pt;
+            vertical-align: middle;
         }
 
-        .ttd-section {
-            margin-top: 30pt;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .ttd-box {
-            width: 35%;
+        /* Penyelarasan Kolom */
+        .c-no {
+            width: 30pt;
             text-align: center;
+        }
+
+        .c-tgl {
+            width: 120pt;
+        }
+
+        .c-jam {
+            width: 70pt;
+            text-align: center;
+        }
+
+        .c-status {
+            width: 100pt;
+            text-align: center;
+        }
+
+        /* TANDA TANGAN */
+        .section-ttd {
+            margin-top: 40pt;
+            width: 100%;
+        }
+
+        .section-ttd td {
+            width: 50%;
+            text-align: center;
+            vertical-align: top;
         }
 
         .ttd-space {
-            height: 50pt;
-            border-bottom: 1pt solid #000;
-            margin-bottom: 5pt;
+            height: 60pt;
         }
 
+        .ttd-nama {
+            font-weight: bold;
+            text-decoration: underline;
+        }
+
+        /* Matikan animasi */
         * {
             animation: none !important;
             transition: none !important;
@@ -160,21 +177,23 @@
 </style>
 
 <!-- =============================================
-     TAMPILAN WEB
+     TAMPILAN WEB (LAYAR)
      ============================================= -->
 <div id="web-area">
     <div class="row align-items-center mb-5 mt-4">
         <div class="col-md-7">
             <h2 class="fw-bold text-white mb-2">Riwayat Absensi</h2>
-            <p class="text-muted">Pantau aktivitas kehadiran Anda 30 hari terakhir.</p>
+            <p class="text-muted">Laporan aktivitas kehadiran 30 hari terakhir.</p>
         </div>
         <div class="col-md-5 text-md-end">
-            <button onclick="window.print()" class="btn btn-outline-info me-2">
-                <i class="fas fa-print me-2"></i> Cetak PDF
-            </button>
-            <a href="{% url 'index' %}" class="btn btn-modern-neutral">
-                <i class="fas fa-arrow-left me-2"></i> Dashboard
-            </a>
+            <div class="web-btns d-inline-flex">
+                <button onclick="window.print()" class="btn btn-primary d-flex align-items-center">
+                    <i class="fas fa-print me-2"></i> Cetak Laporan
+                </button>
+                <a href="{% url 'index' %}" class="btn btn-modern-neutral">
+                    <i class="fas fa-arrow-left me-2"></i> Kembali
+                </a>
+            </div>
         </div>
     </div>
 
@@ -184,8 +203,8 @@
                 <thead>
                     <tr>
                         <th class="px-4 py-3">Tanggal</th>
-                        <th class="px-4 py-3 text-center">Jam Masuk</th>
-                        <th class="px-4 py-3 text-center">Jam Pulang</th>
+                        <th class="px-4 py-3 text-center">Masuk</th>
+                        <th class="px-4 py-3 text-center">Pulang</th>
                         <th class="px-4 py-3 text-center">Status</th>
                     </tr>
                 </thead>
@@ -195,36 +214,27 @@
                         <td class="px-4 fw-bold">{{ h.date|date:"d F Y" }}</td>
                         <td class="px-3 text-center">
                             {% if h.check_in %}
-                            <span class="badge bg-success bg-opacity-10 text-success px-2 py-1">
-                                <i class="fas fa-clock me-1"></i> {{ h.check_in|time:"H:i" }}
-                            </span>
+                            <span class="text-success fw-bold">{{ h.check_in|time:"H:i" }}</span>
                             {% else %}-{% endif %}
                         </td>
                         <td class="px-3 text-center">
                             {% if h.check_out %}
-                            <span class="badge bg-primary bg-opacity-10 text-primary px-2 py-1">
-                                <i class="fas fa-clock me-1"></i> {{ h.check_out|time:"H:i" }}
-                            </span>
-                            {% else %}
-                            <span class="text-muted small italic">Belum absen</span>
-                            {% endif %}
+                            <span class="text-primary fw-bold">{{ h.check_out|time:"H:i" }}</span>
+                            {% else %}<span class="text-muted small">Belum absen</span>{% endif %}
                         </td>
                         <td class="px-3 text-center">
                             {% if h.check_in and h.check_out %}
                             <span class="badge rounded-pill bg-success-subtle text-success px-3">Selesai</span>
                             {% elif h.check_in %}
-                            <span class="badge rounded-pill bg-warning-subtle text-warning px-3">Sedang Bekerja</span>
+                            <span class="badge rounded-pill bg-warning-subtle text-warning px-3">Aktif</span>
                             {% else %}
-                            <span class="badge rounded-pill bg-danger-subtle text-danger px-3">Tidak Hadir</span>
+                            <span class="badge rounded-pill bg-danger-subtle text-danger px-3">Alpha/Libur</span>
                             {% endif %}
                         </td>
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="4" class="text-center py-5 text-muted">
-                            <i class="fas fa-history fa-3x mb-3 d-block opacity-25"></i>
-                            Belum ada riwayat absensi.
-                        </td>
+                        <td colspan="4" class="text-center py-5 text-muted">Belum ada riwayat absensi.</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -234,45 +244,56 @@
 </div>
 
 <!-- =============================================
-     AREA CETAK
+     AREA CETAK (HASIL PRINT)
      ============================================= -->
 <div id="print-area">
-    <div class="kop">
-        <div class="kop-kiri">
-            <h1>PT. EMIP SUKSES MANDIRI</h1>
-            <p>Sistem Manajemen SDM &bull; Bandung, Jawa Barat</p>
-        </div>
-        <div class="kop-kanan">
-            <div class="judul">LAPORAN KEHADIRAN INDIVIDU</div>
-            <div class="sub">Dicetak: {% now "d/m/Y H:i" %} WIB</div>
-        </div>
+
+    <div class="print-header">
+        <h1>PT. EMIP SUKSES MANDIRI</h1>
+        <p>Jl. Raya Utama Kantor &bull; Sistem Informasi Manajemen SDM</p>
     </div>
 
-    <div class="info-karyawan">
-        <div class="info-item"><strong>Nama:</strong> {{ user.employee.name }}</div>
-        <div class="info-item"><strong>ID/NIK:</strong> {{ user.employee.employee_id }}</div>
-        <div class="info-item"><strong>Departemen:</strong> {{ user.employee.department.name|default:"-" }}</div>
-        <div class="info-item"><strong>Periode:</strong> 30 Hari Terakhir</div>
+    <div class="judul-laporan">
+        <h2>LAPORAN KEHADIRAN KARYAWAN</h2>
+        <p>Periode: 30 Hari Terakhir (Hingga {% now "d F Y" %})</p>
     </div>
 
-    <table class="histori-tabel">
+    <table class="data-karyawan">
+        <tr>
+            <td style="width: 100pt;">Nama Karyawan</td>
+            <td style="width: 10pt;">:</td>
+            <td style="font-weight: bold;">{{ user.employee.name }}</td>
+        </tr>
+        <tr>
+            <td>ID / NIK</td>
+            <td>:</td>
+            <td>{{ user.employee.employee_id }}</td>
+        </tr>
+        <tr>
+            <td>Departemen</td>
+            <td>:</td>
+            <td>{{ user.employee.department.name|default:"-" }}</td>
+        </tr>
+    </table>
+
+    <table class="table-cetak">
         <thead>
             <tr>
-                <th style="width: 5%;">No</th>
-                <th style="width: 25%;">Hari, Tanggal</th>
-                <th style="width: 20%;">Jam Masuk</th>
-                <th style="width: 20%;">Jam Pulang</th>
-                <th style="width: 30%;">Status Kehadiran</th>
+                <th class="c-no">No</th>
+                <th class="c-tgl">Hari & Tanggal</th>
+                <th class="c-jam">Jam Masuk</th>
+                <th class="c-jam">Jam Pulang</th>
+                <th class="c-status">Status Kehadiran</th>
             </tr>
         </thead>
         <tbody>
             {% for h in histori %}
             <tr>
-                <td>{{ forloop.counter }}</td>
-                <td style="text-align: left;">{{ h.date|date:"l, d F Y" }}</td>
-                <td>{{ h.check_in|time:"H:i"|default:"-" }}</td>
-                <td>{{ h.check_out|time:"H:i"|default:"-" }}</td>
-                <td>
+                <td class="c-no">{{ forloop.counter }}</td>
+                <td class="c-tgl">{{ h.date|date:"l, d F Y" }}</td>
+                <td class="c-jam">{{ h.check_in|time:"H:i"|default:"-" }}</td>
+                <td class="c-jam">{{ h.check_out|time:"H:i"|default:"-" }}</td>
+                <td class="c-status">
                     {% if h.check_in and h.check_out %} Hadir (Selesai)
                     {% elif h.check_in %} Sedang Bekerja
                     {% else %} Tidak Hadir / Libur
@@ -283,21 +304,28 @@
         </tbody>
     </table>
 
-    <div class="ttd-section">
-        <div class="ttd-box">
-            <div style="font-size: 8pt; margin-bottom: 40pt;">Disetujui oleh,</div>
-            <div style="border-top: 1pt solid #000; font-weight: bold; padding-top: 3pt;">Kepala Departemen / HRD</div>
-        </div>
-        <div class="ttd-box">
-            <div style="font-size: 8pt; margin-bottom: 40pt;">Dicetak oleh,</div>
-            <div style="border-top: 1pt solid #000; font-weight: bold; padding-top: 3pt;">{{ user.employee.name }}</div>
-            <div style="font-size: 7.5pt; color: #666;">Karyawan</div>
-        </div>
+    <table class="section-ttd">
+        <tr>
+            <td>
+                <p>Mengetahui,</p>
+                <div class="ttd-space"></div>
+                <p class="ttd-nama">Kepala Departemen / HRD</p>
+                <p style="font-size: 8pt; margin-top: -8pt;">NIP: ___________________</p>
+            </td>
+            <td>
+                <p>Bandung, {% now "d F Y" %}</p>
+                <div class="ttd-space"></div>
+                <p class="ttd-nama">{{ user.employee.name }}</p>
+                <p style="font-size: 8pt; margin-top: -8pt;">NIK: {{ user.employee.employee_id }}</p>
+            </td>
+        </tr>
+    </table>
+
+    <div
+        style="margin-top: 30pt; font-size: 7.5pt; color: #555; text-align: center; border-top: 0.5pt solid #eee; padding-top: 5pt;">
+        Dokumen ini diterbitkan oleh Sistem HRD PT. EMIP SUKSES MANDIRI secara otomatis.
     </div>
 
-    <div style="margin-top: 15pt; text-align: right; font-size: 7pt; color: #999;">
-        Generated by HRD System &bull; Dokumen ini adalah bukti kehadiran resmi.
-    </div>
 </div>
 
 {% endblock %}
