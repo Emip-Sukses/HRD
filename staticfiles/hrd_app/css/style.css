@@ -121,3 +121,93 @@ body {
 .animate-pulse {
     animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
+
+/* ===== PRINT STYLES ===== */
+@media print {
+    /* Sembunyikan elemen yang tidak perlu dicetak */
+    .navbar,
+    .no-print,
+    .alert,
+    footer {
+        display: none !important;
+    }
+
+    /* Reset background & warna agar tinta hemat */
+    body {
+        background: #fff !important;
+        color: #000 !important;
+        font-size: 12px;
+    }
+
+    /* Card jadi flat (tanpa shadow/glassmorphism) */
+    .card {
+        background: #fff !important;
+        border: 1px solid #dee2e6 !important;
+        box-shadow: none !important;
+        backdrop-filter: none !important;
+    }
+
+    /* Tabel selalu full-width dan batas jelas */
+    .table {
+        width: 100% !important;
+        border-collapse: collapse !important;
+    }
+
+    .table th,
+    .table td {
+        border: 1px solid #dee2e6 !important;
+        padding: 6px 10px !important;
+        color: #000 !important;
+        background: #fff !important;
+    }
+
+    /* Header tabel dengan background abu-abu muda */
+    .table thead tr {
+        background-color: #f0f0f0 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    /* Sembunyikan foto selfie saat print (hemat tinta) */
+    .table td img {
+        display: none !important;
+    }
+
+    /* Badge status tetap terbaca */
+    .badge {
+        border: 1px solid #aaa !important;
+        background: #fff !important;
+        color: #000 !important;
+        padding: 2px 6px !important;
+    }
+
+    /* Judul halaman */
+    h2 {
+        color: #000 !important;
+        font-size: 18px !important;
+    }
+
+    .text-muted {
+        color: #555 !important;
+    }
+
+    /* Glass panel tanggal */
+    .glass-panel {
+        background: #f9f9f9 !important;
+        border: 1px solid #ccc !important;
+        backdrop-filter: none !important;
+    }
+
+    .glass-panel h5,
+    .glass-panel span {
+        color: #000 !important;
+    }
+
+    /* Pastikan konten full width saat print */
+    .container,
+    .container-fluid {
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 0 !important;
+    }
+}
