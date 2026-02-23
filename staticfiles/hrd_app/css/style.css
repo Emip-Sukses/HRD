@@ -1,7 +1,7 @@
 :root {
     --primary-color: #4f46e5;
     --primary-hover: #4338ca;
-    --secondary-color: #ec4899; 
+    --secondary-color: #ec4899;
     --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
     --card-bg: rgba(255, 255, 255, 0.9);
     --text-color: #1f2937;
@@ -22,7 +22,7 @@ body {
     background: rgba(255, 255, 255, 0.8) !important;
     backdrop-filter: blur(10px);
     border-bottom: var(--glass-border);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .navbar-brand {
@@ -37,7 +37,8 @@ body {
     transition: color 0.3s ease;
 }
 
-.nav-link:hover, .nav-link.active {
+.nav-link:hover,
+.nav-link.active {
     color: var(--primary-color) !important;
 }
 
@@ -83,7 +84,7 @@ body {
 .alert {
     border-radius: 0.75rem;
     border: none;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
 }
 
 .page-header {
@@ -96,8 +97,15 @@ body {
 
 /* Micro-animations */
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .animate-fade-in {
@@ -114,8 +122,17 @@ body {
 }
 
 @keyframes pulse {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.5; transform: scale(0.9); }
+
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.5;
+        transform: scale(0.9);
+    }
 }
 
 .animate-pulse {
@@ -124,90 +141,108 @@ body {
 
 /* ===== PRINT STYLES ===== */
 @media print {
-    /* Sembunyikan elemen yang tidak perlu dicetak */
+
+    /* Sembunyikan elemen non-essensial */
     .navbar,
     .no-print,
     .alert,
-    footer {
+    footer,
+    .btn,
+    .nav-tabs {
         display: none !important;
+        visibility: hidden !important;
     }
 
-    /* Reset background & warna agar tinta hemat */
+    /* Reset Body & Global solid colors */
     body {
         background: #fff !important;
         color: #000 !important;
-        font-size: 12px;
+        font-size: 11px !important;
+        margin: 0 !important;
+        padding: 0 !important;
     }
 
-    /* Card jadi flat (tanpa shadow/glassmorphism) */
-    .card {
-        background: #fff !important;
-        border: 1px solid #dee2e6 !important;
+    * {
+        background-color: transparent !important;
+        background-image: none !important;
         box-shadow: none !important;
+        text-shadow: none !important;
         backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
     }
 
-    /* Tabel selalu full-width dan batas jelas */
+    /* Paksa teks jadi hitam & solid */
+    .text-white,
+    h2,
+    h5,
+    .fw-bold,
+    td,
+    th,
+    span,
+    p,
+    .text-muted {
+        color: #000 !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+    }
+
+    /* Card & Container: Hilangkan semua efek transparansi */
+    .card,
+    .glass-panel,
+    .card-body {
+        background: #fff !important;
+        border: 1px solid #000 !important;
+        margin: 0 !important;
+        padding: 10px !important;
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        box-shadow: none !important;
+    }
+
+    /* Hilangkan overflow agar tidak memotong isi tabel */
+    .table-responsive,
+    .card,
+    .card-body {
+        overflow: visible !important;
+    }
+
+    /* Tabel Setup: Hitam Putih Solid */
     .table {
         width: 100% !important;
         border-collapse: collapse !important;
+        margin-top: 15px !important;
+        display: table !important;
     }
 
     .table th,
     .table td {
-        border: 1px solid #dee2e6 !important;
-        padding: 6px 10px !important;
-        color: #000 !important;
+        border: 1px solid #000 !important;
+        padding: 8px !important;
         background: #fff !important;
+        color: #000 !important;
+        visibility: visible !important;
+        vertical-align: middle !important;
     }
 
-    /* Header tabel dengan background abu-abu muda */
+    /* Foto Selfie: Tampilkan secara eksplisit */
+    .table td img {
+        display: inline-block !important;
+        visibility: visible !important;
+        width: 45px !important;
+        height: 45px !important;
+        border: 1px solid #000 !important;
+    }
+
+    /* Header tabel abu-abu muda */
     .table thead tr {
-        background-color: #f0f0f0 !important;
+        background-color: #f2f2f2 !important;
         -webkit-print-color-adjust: exact;
         print-color-adjust: exact;
     }
 
-    /* Sembunyikan foto selfie saat print (hemat tinta) */
-    .table td img {
-        display: none !important;
-    }
-
-    /* Badge status tetap terbaca */
-    .badge {
-        border: 1px solid #aaa !important;
-        background: #fff !important;
-        color: #000 !important;
-        padding: 2px 6px !important;
-    }
-
-    /* Judul halaman */
-    h2 {
-        color: #000 !important;
-        font-size: 18px !important;
-    }
-
-    .text-muted {
-        color: #555 !important;
-    }
-
-    /* Glass panel tanggal */
-    .glass-panel {
-        background: #f9f9f9 !important;
-        border: 1px solid #ccc !important;
-        backdrop-filter: none !important;
-    }
-
-    .glass-panel h5,
-    .glass-panel span {
-        color: #000 !important;
-    }
-
-    /* Pastikan konten full width saat print */
-    .container,
-    .container-fluid {
-        width: 100% !important;
-        max-width: 100% !important;
-        padding: 0 !important;
+    @page {
+        size: auto;
+        margin: 1cm;
     }
 }

@@ -1,93 +1,605 @@
 {% extends 'hrd_app/base.html' %}
 
 {% block content %}
-<div class="row align-items-center mb-5 mt-4">
-    <div class="col-md-8">
-        <h2 class="fw-bold text-white mb-2" style="letter-spacing: -1px;">Rekap Absensi Harian</h2>
-        <p class="text-muted">Laporan kehadiran seluruh karyawan hari ini.</p>
+<style>
+    /* ===== PRINT STYLES ===== */
+    @media print {
+
+        /* Sembunyikan semua elemen UI / layar */
+        nav,
+        .navbar,
+        .no-print,
+        .btn,
+        footer,
+        .alert,
+        .sidebar,
+        .topbar,
+        body>.container>.row>.col-md-8,
+        body>.container>.row>.col-md-4 {
+            display: none !important;
+        }
+
+        /* Reset halaman cetak */
+        @page {
+            size: A4 landscape;
+            margin: 15mm 12mm 15mm 12mm;
+        }
+
+        html,
+        body {
+            background: #fff !important;
+            color: #000 !important;
+            font-family: 'Arial', sans-serif !important;
+            font-size: 9pt !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        /* Hanya tampilkan area print */
+        #print-area {
+            display: block !important;
+        }
+
+        /* Kop Surat */
+        .print-header {
+            display: flex !important;
+            align-items: center !important;
+            border-bottom: 3px solid #1a1a2e !important;
+            padding-bottom: 8px !important;
+            margin-bottom: 10px !important;
+        }
+
+        .print-header .company-logo {
+            width: 55px !important;
+            height: 55px !important;
+            margin-right: 12px !important;
+        }
+
+        .print-header .company-info h1 {
+            font-size: 14pt !important;
+            font-weight: bold !important;
+            margin: 0 !important;
+            color: #1a1a2e !important;
+        }
+
+        .print-header .company-info p {
+            font-size: 8pt !important;
+            margin: 2px 0 0 0 !important;
+            color: #444 !important;
+        }
+
+        .print-header .doc-info {
+            margin-left: auto !important;
+            text-align: right !important;
+        }
+
+        .print-header .doc-info .doc-title {
+            font-size: 13pt !important;
+            font-weight: bold !important;
+            color: #1a1a2e !important;
+        }
+
+        .print-header .doc-info .doc-date {
+            font-size: 9pt !important;
+            color: #555 !important;
+        }
+
+        /* Sub-header info dokumen */
+        .print-meta {
+            display: flex !important;
+            justify-content: space-between !important;
+            background: #f4f6f9 !important;
+            border: 1px solid #ddd !important;
+            border-radius: 4px !important;
+            padding: 6px 12px !important;
+            margin-bottom: 10px !important;
+            font-size: 8pt !important;
+        }
+
+        .print-meta span {
+            color: #333 !important;
+        }
+
+        .print-meta strong {
+            color: #1a1a2e !important;
+        }
+
+        /* Tabel Cetak */
+        .print-table {
+            width: 100% !important;
+            border-collapse: collapse !important;
+        }
+
+        .print-table thead tr {
+            background-color: #1a1a2e !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+
+        .print-table thead th {
+            color: #fff !important;
+            font-size: 8pt !important;
+            font-weight: bold !important;
+            padding: 7px 8px !important;
+            text-align: center !important;
+            border: 1px solid #333 !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.5px !important;
+        }
+
+        .print-table tbody tr {
+            page-break-inside: avoid !important;
+        }
+
+        .print-table tbody tr:nth-child(even) {
+            background-color: #f9f9fb !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+
+        .print-table tbody td {
+            border: 1px solid #ccc !important;
+            padding: 6px 8px !important;
+            font-size: 8.5pt !important;
+            vertical-align: middle !important;
+            color: #000 !important;
+        }
+
+        /* Kolom nomor urut */
+        .col-no {
+            width: 4% !important;
+            text-align: center !important;
+        }
+
+        /* Kolom NIK */
+        .col-nik {
+            width: 10% !important;
+            text-align: center !important;
+        }
+
+        /* Kolom Nama */
+        .col-nama {
+            width: 20% !important;
+        }
+
+        /* Kolom Dept */
+        .col-dept {
+            width: 13% !important;
+        }
+
+        /* Kolom Jam */
+        .col-jam {
+            width: 8% !important;
+            text-align: center !important;
+        }
+
+        /* Kolom Durasi */
+        .col-dur {
+            width: 9% !important;
+            text-align: center !important;
+        }
+
+        /* Kolom Foto */
+        .col-foto {
+            width: 16% !important;
+            text-align: center !important;
+        }
+
+        /* Kolom Status */
+        .col-status {
+            width: 10% !important;
+            text-align: center !important;
+        }
+
+        /* Foto Absensi */
+        .foto-pair {
+            display: flex !important;
+            justify-content: center !important;
+            gap: 6px !important;
+        }
+
+        .foto-pair .foto-item {
+            text-align: center !important;
+        }
+
+        .foto-pair img {
+            display: block !important;
+            width: 45px !important;
+            height: 45px !important;
+            object-fit: cover !important;
+            border: 1px solid #999 !important;
+            border-radius: 3px !important;
+        }
+
+        .foto-pair .foto-label {
+            font-size: 6.5pt !important;
+            color: #666 !important;
+            margin-top: 2px !important;
+            display: block !important;
+        }
+
+        /* Badge Status */
+        .badge-status {
+            display: inline-block !important;
+            padding: 2px 8px !important;
+            border-radius: 3px !important;
+            font-size: 7.5pt !important;
+            font-weight: bold !important;
+        }
+
+        .badge-selesai {
+            background: #d4edda !important;
+            color: #155724 !important;
+            border: 1px solid #c3e6cb !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+
+        .badge-aktif {
+            background: #fff3cd !important;
+            color: #856404 !important;
+            border: 1px solid #ffc107 !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+
+        /* Teks jam */
+        .jam-masuk {
+            color: #155724 !important;
+            font-weight: bold !important;
+        }
+
+        .jam-pulang {
+            color: #004085 !important;
+            font-weight: bold !important;
+        }
+
+        .belum-pulang {
+            color: #856404 !important;
+            font-style: italic !important;
+        }
+
+        /* Ringkasan / Summary */
+        .print-summary {
+            display: flex !important;
+            gap: 12px !important;
+            margin-top: 10px !important;
+        }
+
+        .print-summary .sum-box {
+            flex: 1 !important;
+            border: 1px solid #ccc !important;
+            border-radius: 4px !important;
+            padding: 6px 10px !important;
+            text-align: center !important;
+        }
+
+        .print-summary .sum-box .sum-number {
+            font-size: 14pt !important;
+            font-weight: bold !important;
+            color: #1a1a2e !important;
+        }
+
+        .print-summary .sum-box .sum-label {
+            font-size: 7.5pt !important;
+            color: #555 !important;
+        }
+
+        /* Footer Tanda Tangan */
+        .print-footer {
+            margin-top: 20px !important;
+            display: flex !important;
+            justify-content: space-between !important;
+            border-top: 1px solid #ccc !important;
+            padding-top: 12px !important;
+        }
+
+        .print-footer .ttd-box {
+            width: 28% !important;
+            text-align: center !important;
+        }
+
+        .print-footer .ttd-box .ttd-title {
+            font-size: 8pt !important;
+            font-weight: bold !important;
+            margin-bottom: 4px !important;
+        }
+
+        .print-footer .ttd-box .ttd-line {
+            border-bottom: 1px solid #000 !important;
+            height: 45px !important;
+            margin-bottom: 4px !important;
+        }
+
+        .print-footer .ttd-box .ttd-name {
+            font-size: 8pt !important;
+            color: #333 !important;
+        }
+
+        .print-footer .ttd-box .ttd-jabatan {
+            font-size: 7.5pt !important;
+            color: #666 !important;
+        }
+
+        /* Page number */
+        .print-page-num {
+            text-align: right !important;
+            font-size: 7.5pt !important;
+            color: #888 !important;
+            margin-top: 5px !important;
+        }
+
+        /* Sembunyikan tampilan web di print */
+        #web-area {
+            display: none !important;
+        }
+
+        * {
+            animation: none !important;
+            transition: none !important;
+            box-shadow: none !important;
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
+        }
+    }
+
+    /* ===== SCREEN STYLES (tampilan web normal) ===== */
+    @media screen {
+        #print-area {
+            display: none;
+        }
+    }
+</style>
+
+<!-- ========================================= -->
+<!-- TAMPILAN WEB (hanya muncul di layar) -->
+<!-- ========================================= -->
+<div id="web-area">
+    <div class="row align-items-center mb-5 mt-4">
+        <div class="col-md-8">
+            <h2 class="fw-bold text-white mb-2" style="letter-spacing: -1px;">Rekap Absensi Harian</h2>
+            <p class="text-muted">Laporan kehadiran seluruh karyawan hari ini.</p>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <div class="p-3 glass-panel d-inline-block text-start"
+                style="border-radius: 12px; padding: 0.75rem 1.25rem !important;">
+                <span class="text-primary fw-bold small text-uppercase" style="letter-spacing: 1px;">Tanggal</span>
+                <h5 class="mb-0 fw-bold text-white">{{ today|date:"d F Y" }}</h5>
+            </div>
+        </div>
     </div>
-    <div class="col-md-4 text-md-end">
-        <div class="p-3 glass-panel d-inline-block text-start"
-            style="border-radius: 12px; padding: 0.75rem 1.25rem !important;">
-            <span class="text-primary fw-bold small text-uppercase" style="letter-spacing: 1px;">Tanggal</span>
-            <h5 class="mb-0 fw-bold text-white">{{ today|date:"d F Y" }}</h5>
+
+    <div class="card card-body p-0 overflow-hidden shadow-lg mb-4">
+        <div class="table-responsive">
+            <table class="table align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th class="px-3 py-3 text-center" style="width:5%">#</th>
+                        <th class="px-3 py-3">NIK</th>
+                        <th class="px-3 py-3">Karyawan</th>
+                        <th class="px-3 py-3">Departemen</th>
+                        <th class="px-3 py-3 text-center">Masuk</th>
+                        <th class="px-3 py-3 text-center">Pulang</th>
+                        <th class="px-3 py-3 text-center">Selfie</th>
+                        <th class="px-3 py-3 text-center">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in laporan %}
+                    <tr>
+                        <td class="py-3 px-3 text-center text-muted small">{{ forloop.counter }}</td>
+                        <td class="py-3 px-3 fw-semibold text-secondary small">{{ item.employee.employee_id }}</td>
+                        <td class="py-3 px-3 fw-bold">{{ item.employee.name }}</td>
+                        <td class="py-3 px-3 text-muted small">{{ item.employee.department.name|default:"-" }}</td>
+                        <td class="py-3 px-3 text-center">
+                            <span class="text-success fw-bold">{{ item.check_in|time:"H:i" }}</span>
+                        </td>
+                        <td class="py-3 px-3 text-center">
+                            {% if item.check_out %}
+                            <span class="text-primary fw-bold">{{ item.check_out|time:"H:i" }}</span>
+                            {% else %}
+                            <span class="text-muted fst-italic small">Belum Pulang</span>
+                            {% endif %}
+                        </td>
+                        <td class="py-3 px-3 text-center">
+                            <div class="d-flex justify-content-center gap-2">
+                                {% if item.photo_in %}
+                                <a href="{{ item.photo_in.url }}" target="_blank" title="Foto Masuk">
+                                    <img src="{{ item.photo_in.url }}" class="rounded border shadow-sm"
+                                        style="width: 38px; height: 38px; object-fit: cover;">
+                                </a>
+                                {% else %}<span class="text-muted">-</span>{% endif %}
+
+                                {% if item.photo_out %}
+                                <a href="{{ item.photo_out.url }}" target="_blank" title="Foto Pulang">
+                                    <img src="{{ item.photo_out.url }}" class="rounded border shadow-sm"
+                                        style="width: 38px; height: 38px; object-fit: cover;">
+                                </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                        <td class="py-3 px-3 text-center">
+                            {% if item.check_out %}
+                            <span class="badge rounded-pill bg-success-subtle text-success px-3">Selesai</span>
+                            {% else %}
+                            <span class="badge rounded-pill bg-warning-subtle text-warning px-3">Aktif</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="8" class="text-center py-5 text-muted">
+                            <i class="fas fa-clipboard-list fa-3x mb-3 d-block opacity-25"></i>
+                            Belum ada data absensi untuk hari ini.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="mt-4 d-flex justify-content-end p-3">
+            <button onclick="window.print()" class="btn btn-outline-secondary shadow-sm no-print">
+                <i class="fas fa-print me-2"></i> Cetak Laporan
+            </button>
         </div>
     </div>
 </div>
 
-<div class="card card-body p-0 overflow-hidden shadow-lg mb-4">
-    <div class="table-responsive">
-        <table class="table align-middle mb-0">
-            <thead>
-                <tr>
-                    <th class="px-4 py-3">NIK</th>
-                    <th class="px-4 py-3">Karyawan</th>
-                    <th class="px-4 py-3">Departemen</th>
-                    <th class="px-4 py-3 text-center">Masuk</th>
-                    <th class="px-4 py-3 text-center">Pulang</th>
-                    <th class="px-4 py-3 text-center">Selfie</th>
-                    <th class="px-4 py-3 text-center">Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for item in laporan %}
-                <tr>
-                    <td class="py-3 px-4 align-middle fw-semibold text-secondary small">{{ item.employee.employee_id }}
-                    </td>
-                    <td class="py-3 px-4 align-middle fw-bold">{{ item.employee.name }}</td>
-                    <td class="py-3 px-4 align-middle text-muted small">{{ item.employee.department.name|default:"-" }}
-                    </td>
-                    <td class="py-3 px-4 align-middle text-center">
-                        <span class="text-success fw-bold">{{ item.check_in|time:"H:i" }}</span>
-                    </td>
-                    <td class="py-3 px-4 align-middle text-center">
-                        {% if item.check_out %}
-                        <span class="text-primary fw-bold">{{ item.check_out|time:"H:i" }}</span>
-                        {% else %}
-                        <span class="text-muted italic small">Belum Pulang</span>
-                        {% endif %}
-                    </td>
-                    <td class="py-3 px-4 align-middle text-center">
-                        <div class="d-flex justify-content-center gap-2">
-                            {% if item.photo_in %}
-                            <a href="{{ item.photo_in.url }}" target="_blank">
-                                <img src="{{ item.photo_in.url }}" class="rounded border shadow-sm"
-                                    style="width: 35px; height: 35px; object-fit: cover;" title="Foto Masuk">
-                            </a>
-                            {% else %}-{% endif %}
+<!-- ========================================= -->
+<!-- AREA CETAK (hanya muncul saat print) -->
+<!-- ========================================= -->
+<div id="print-area">
 
-                            {% if item.photo_out %}
-                            <a href="{{ item.photo_out.url }}" target="_blank">
-                                <img src="{{ item.photo_out.url }}" class="rounded border shadow-sm"
-                                    style="width: 35px; height: 35px; object-fit: cover;" title="Foto Pulang">
-                            </a>
+    <!-- KOP SURAT -->
+    <div class="print-header">
+        <div class="company-info">
+            <h1>PT. EMIP SUKSES MANDIRI</h1>
+            <p>Sistem Manajemen SDM &bull; Bandung, Jawa Barat</p>
+        </div>
+        <div class="doc-info">
+            <div class="doc-title">REKAP ABSENSI HARIAN</div>
+            <div class="doc-date">Tanggal: {{ today|date:"d F Y" }}</div>
+            <div class="doc-date">Dicetak: {% now "d/m/Y H:i" %} WIB</div>
+        </div>
+    </div>
+
+    <!-- META INFO -->
+    <div class="print-meta">
+        <span><strong>Periode:</strong> {{ today|date:"d F Y" }}</span>
+        <span><strong>Total Karyawan Hadir:</strong> {{ laporan|length }} orang</span>
+        <span><strong>Status Laporan:</strong> Rekap Harian Otomatis</span>
+        <span><strong>Dibuat oleh:</strong> Sistem HRD</span>
+    </div>
+
+    <!-- TABEL DATA -->
+    <table class="print-table">
+        <thead>
+            <tr>
+                <th class="col-no">No.</th>
+                <th class="col-nik">NIK</th>
+                <th class="col-nama" style="text-align:left">Nama Karyawan</th>
+                <th class="col-dept" style="text-align:left">Departemen</th>
+                <th class="col-jam">Jam Masuk</th>
+                <th class="col-jam">Jam Pulang</th>
+                <th class="col-dur">Durasi Kerja</th>
+                <th class="col-foto">Selfie Masuk &amp; Pulang</th>
+                <th class="col-status">Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in laporan %}
+            <tr>
+                <td class="col-no">{{ forloop.counter }}</td>
+                <td class="col-nik" style="text-align:center">{{ item.employee.employee_id }}</td>
+                <td class="col-nama" style="font-weight:bold">{{ item.employee.name }}</td>
+                <td class="col-dept">{{ item.employee.department.name|default:"-" }}</td>
+                <td class="col-jam jam-masuk">{{ item.check_in|time:"H:i" }}</td>
+                <td class="col-jam">
+                    {% if item.check_out %}
+                    <span class="jam-pulang">{{ item.check_out|time:"H:i" }}</span>
+                    {% else %}
+                    <span class="belum-pulang">-</span>
+                    {% endif %}
+                </td>
+                <td class="col-dur" style="text-align:center">
+                    {% if item.check_out %}
+                    {% with h=item.check_in m=item.check_out %}
+                    <!-- Durasi dihitung dari selisih waktu -->
+                    <span style="font-size:8pt">{{ item.check_in|time:"H:i" }}–{{ item.check_out|time:"H:i" }}</span>
+                    {% endwith %}
+                    {% else %}
+                    <span class="belum-pulang">Aktif</span>
+                    {% endif %}
+                </td>
+                <td class="col-foto">
+                    <div class="foto-pair">
+                        <div class="foto-item">
+                            {% if item.photo_in %}
+                            <img src="{{ item.photo_in.url }}" alt="Masuk">
+                            <span class="foto-label">&#9654; Masuk</span>
+                            {% else %}
+                            <span style="font-size:7pt;color:#999">Tdk ada</span>
                             {% endif %}
                         </div>
-                    </td>
-                    <td class="py-3 px-4 align-middle text-center">
-                        {% if item.check_out %}
-                        <span class="badge rounded-pill bg-success-subtle text-success px-3">Selesai</span>
-                        {% else %}
-                        <span class="badge rounded-pill bg-warning-subtle text-warning px-3">Aktif</span>
-                        {% endif %}
-                    </td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="7" class="text-center py-5 text-muted">
-                        <i class="fas fa-clipboard-list fa-3x mb-3 d-block opacity-25"></i>
-                        Belum ada data absensi untuk hari ini.
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                        <div class="foto-item">
+                            {% if item.photo_out %}
+                            <img src="{{ item.photo_out.url }}" alt="Pulang">
+                            <span class="foto-label">&#9664; Pulang</span>
+                            {% else %}
+                            <span style="font-size:7pt;color:#999">Tdk ada</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </td>
+                <td class="col-status">
+                    {% if item.check_out %}
+                    <span class="badge-status badge-selesai">Selesai</span>
+                    {% else %}
+                    <span class="badge-status badge-aktif">Aktif</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="9" style="text-align:center; padding:20px; color:#999; font-style:italic;">
+                    Tidak ada data absensi untuk hari ini.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- RINGKASAN -->
+    <div class="print-summary">
+        <div class="sum-box">
+            <div class="sum-number">{{ laporan|length }}</div>
+            <div class="sum-label">Total Hadir</div>
+        </div>
+        <div class="sum-box">
+            <div class="sum-number">
+                {% with selesai=0 %}
+                {{ laporan|length }}
+                {% endwith %}
+            </div>
+            <div class="sum-label">Tercatat</div>
+        </div>
+        <div class="sum-box">
+            <div class="sum-number">{{ today|date:"d/m/Y" }}</div>
+            <div class="sum-label">Tanggal Rekap</div>
+        </div>
+        <div class="sum-box" style="flex:3">
+            <div class="sum-label" style="text-align:left; font-size:7.5pt; color:#555; line-height:1.6">
+                Laporan ini digenerate secara otomatis oleh Sistem Manajemen HRD.<br>
+                Data absensi bersifat final dan terverifikasi melalui GPS + Selfie.
+            </div>
+        </div>
     </div>
 
-    <div class="mt-4 d-flex justify-content-end p-3">
-        <button onclick="window.print()" class="btn btn-outline-secondary shadow-sm no-print">
-            <i class="fas fa-print me-2"></i> Cetak Laporan
-        </button>
+    <!-- FOOTER TANDA TANGAN -->
+    <div class="print-footer">
+        <div class="ttd-box">
+            <div class="ttd-title">Mengetahui,</div>
+            <div class="ttd-line"></div>
+            <div class="ttd-name">( ________________________ )</div>
+            <div class="ttd-jabatan">Direktur / Pimpinan</div>
+        </div>
+        <div class="ttd-box">
+            <div class="ttd-title">Diperiksa oleh,</div>
+            <div class="ttd-line"></div>
+            <div class="ttd-name">( ________________________ )</div>
+            <div class="ttd-jabatan">Kepala Departemen</div>
+        </div>
+        <div class="ttd-box">
+            <div class="ttd-title">Dibuat oleh,</div>
+            <div class="ttd-line"></div>
+            <div class="ttd-name">( ________________________ )</div>
+            <div class="ttd-jabatan">Bagian HRD</div>
+        </div>
+    </div>
+
+    <div class="print-page-num">
+        Dokumen ini dicetak dari Sistem HRD &bull; {{ today|date:"d F Y" }}
     </div>
 </div>
+
 {% endblock %}
