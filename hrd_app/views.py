@@ -148,10 +148,19 @@ def index(request):
             return redirect('index')
 
         if aksi == "masuk":
-            # Proses Foto Base64
-            format, imgstr = photo_data.split(';base64,')
-            ext = format.split('/')[-1]
-            photo_file = ContentFile(base64.b64decode(imgstr), name=f"in_{employee.employee_id}_{today}.{ext}")
+            # Proses Foto Base64 — dengan validasi format mencegah crash
+            try:
+                format_part, imgstr = photo_data.split(';base64,')
+                ext = format_part.split('/')[-1].lower()
+                if ext not in ['jpeg', 'jpg', 'png', 'webp']:
+                    ext = 'jpg'
+                photo_file = ContentFile(
+                    base64.b64decode(imgstr),
+                    name=f"in_{employee.employee_id}_{today}.{ext}"
+                )
+            except Exception:
+                messages.error(request, "Format foto tidak valid. Silakan coba lagi.")
+                return redirect('index')
 
             # get_or_create memastikan tidak ada duplikasi data absensi di hari yang sama
             obj, created = Attendance.objects.get_or_create(
@@ -174,10 +183,19 @@ def index(request):
             absen = Attendance.objects.filter(employee=employee, date=today).first()
             if absen:
                 if not absen.check_out:
-                    # Proses Foto Base64
-                    format, imgstr = photo_data.split(';base64,')
-                    ext = format.split('/')[-1]
-                    photo_file = ContentFile(base64.b64decode(imgstr), name=f"out_{employee.employee_id}_{today}.{ext}")
+                    # Proses Foto Base64 — dengan validasi format mencegah crash
+                    try:
+                        format_part, imgstr = photo_data.split(';base64,')
+                        ext = format_part.split('/')[-1].lower()
+                        if ext not in ['jpeg', 'jpg', 'png', 'webp']:
+                            ext = 'jpg'
+                        photo_file = ContentFile(
+                            base64.b64decode(imgstr),
+                            name=f"out_{employee.employee_id}_{today}.{ext}"
+                        )
+                    except Exception:
+                        messages.error(request, "Format foto tidak valid. Silakan coba lagi.")
+                        return redirect('index')
 
                     absen.check_out = timezone.localtime().time()
                     absen.lat_out = lat
@@ -232,8 +250,9 @@ def riwayat_saya(request):
     
     # Riwayat 30 hari terakhir
     histori = Attendance.objects.filter(employee=employee).order_by('-date')[:30]
-    
-    return render(request, 'hrd_app/riwayat_saya.html', {'histori': histori})
+
+    # Kirim 'employee' ke template agar area cetak bisa menampilkan data profil karyawan
+    return render(request, 'hrd_app/riwayat_saya.html', {'histori': histori, 'employee': employee})
 
 @login_required
 def ganti_password(request):

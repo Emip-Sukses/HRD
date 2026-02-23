@@ -262,17 +262,17 @@
         <tr>
             <td style="width: 100pt;">Nama Karyawan</td>
             <td style="width: 10pt;">:</td>
-            <td style="font-weight: bold;">{{ user.employee.name }}</td>
+            <td style="font-weight: bold;">{{ employee.name }}</td>
         </tr>
         <tr>
             <td>ID / NIK</td>
             <td>:</td>
-            <td>{{ user.employee.employee_id }}</td>
+            <td>{{ employee.employee_id }}</td>
         </tr>
         <tr>
             <td>Departemen</td>
             <td>:</td>
-            <td>{{ user.employee.department.name|default:"-" }}</td>
+            <td>{{ employee.department.name|default:"-" }}</td>
         </tr>
     </table>
 
@@ -315,8 +315,8 @@
             <td>
                 <p>Bandung, {% now "d F Y" %}</p>
                 <div class="ttd-space"></div>
-                <p class="ttd-nama">{{ user.employee.name }}</p>
-                <p style="font-size: 8pt; margin-top: -8pt;">NIK: {{ user.employee.employee_id }}</p>
+                <p class="ttd-nama">{{ employee.name }}</p>
+                <p style="font-size: 8pt; margin-top: -8pt;">NIK: {{ employee.employee_id }}</p>
             </td>
         </tr>
     </table>

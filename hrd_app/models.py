@@ -39,13 +39,6 @@ class Employee(models.Model):
         # Format string: "NIK - Nama"
         return f"{self.employee_id} - {self.name}"
 
-    def get_today_attendance(self):
-        """
-        Mengambil data absensi karyawan untuk hari ini.
-        Jika tidak ada, mengembalikan None.
-        """
-        return self.attendance_set.filter(date=timezone.now().date()).first()
-
     class Meta:
         verbose_name = "Karyawan"
         verbose_name_plural = "Daftar Karyawan"
@@ -109,7 +102,6 @@ def create_user_for_employee(sender, instance, created, **kwargs):
             is_superuser=False
         )
         
-        # Hubungkan User dengan Employee
-        instance.user = user
-        instance.save()
+        # Hubungkan User dengan Employee — gunakan update() agar tidak memicu signal post_save lagi (mencegah rekursi)
+        Employee.objects.filter(pk=instance.pk).update(user=user)
         print(f"✅ User account dibuat untuk karyawan: {instance.name} (username: {username}, password: {password})")

@@ -15,6 +15,5 @@ def get_admin_stats():
         'present_today': Attendance.objects.filter(date=today, status='Hadir').count(),
         'late_today': Attendance.objects.filter(date=today, check_in__gt=late_time).count(),
         'total_departments': Department.objects.count(),
-        'izin_today': Attendance.objects.filter(date=today, status='Izin').count(),
     }
     return stats
